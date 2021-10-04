@@ -1,4 +1,3 @@
-import asyncio
 import threading
 import time
 import pytchat
@@ -61,17 +60,24 @@ class CMDInterface:
 > [1]: Add Livestrean
 > [2]: Start ChatDuell
 > [3]: Show Results
-> [4]: Show streams
         """)
 
-    def analyse_chat(self, stream: pytchat.LiveChat, translate: bool= False):
-        thread = threading.Thread(target=asyncio.run, args=(self.CA.read_chat(stream, translate),))
+    def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False, specific_answers_mode: bool = False, specific_words: list[str] = None):
+        thread = threading.Thread(target=self.CA.read_chat, args=(stream, translate, specific_answers_mode, specific_words))
         thread.start()
 
     def start_chat_duel(self):
         if len(self.streams) == 0:
             print("> No Livestreams found.")
             return
+
+        specific_answers_mode: bool = True if input("> Set specific answers [y/n]?: ") in ("y", "yes", "j", "ja") else False
+
+        specific_words: list[str] = []
+        if specific_answers_mode:
+            n: int = self.get_int_input("How many?: ")
+            for i in range(n):
+                specific_words.append(input(f'enter word {i}: ').lower())
 
         duration: int = self.get_int_input("> Pls enter duration in seconds: ")
         start_time = time.time()
@@ -81,7 +87,7 @@ class CMDInterface:
 
         for key in self.streams:
             stream = self.streams[key]
-            self.analyse_chat(stream.stream, stream.translation_on)
+            self.analyse_chat(stream.stream, stream.translation_on, specific_answers_mode, specific_words)
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
         while time.time() < start_time + duration:
             time.sleep(1)
@@ -110,8 +116,8 @@ class CMDInterface:
             n_example_comments = self.get_int_input("> Pls enter amount of example comments: ")
             self.print_top_words(n_top_words, n_example_comments)
 
-        elif command == 4:
-            self.print_streams()
+        # elif command == 4:
+        #     self.print_streams()
         else:
             print("> ERROR: Unknown Command")
 

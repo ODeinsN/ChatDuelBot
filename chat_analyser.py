@@ -1,12 +1,11 @@
 from collections import Counter
-import pytchat
 from googletrans import Translator
 from cache import async_lru
 from typing import Dict
 import pytchat
 import CommentContainer
 from dataclasses import dataclass
-import random
+from threading import Thread
 
 
 """
@@ -65,14 +64,25 @@ class ChatAnalyser:
                 self.word_distribution_list.update({word: CommentContainer.CommentContainer(chat_message)})
         self.comment_counter += 1
 
-    async def read_chat(self, chat, translate: bool = False):
+    def read_chat(self, chat, translate: bool = False, specific_answers_mode: bool = False, specific_words: list[str] = None):
+        t: Thread
         while chat.is_alive() and self.is_CD_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
-                await self.add_comment_to_wordlist(comment, translate)
+                if specific_answers_mode:
+                    found: bool = False
+                    for word in specific_words:
+                        if comment.message.lower().find(word) != -1:
+                            found = True
+                    if not found:
+                        continue
+                t = Thread(target=self.add_comment_to_wordlist, args=(comment, translate,))
+                t.start()
         try:
+            t.join()
             chat.raise_for_status()
-        except pytchat.ChatDataFinished:
             print(">Time finished.")
+        except pytchat.ChatDataFinished:
+            print("> Chat data finished.")
         except Exception as e:
             print(type(e), str(e))

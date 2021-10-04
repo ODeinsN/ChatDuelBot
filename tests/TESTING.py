@@ -1,8 +1,4 @@
-import time
-
 import asynctest
-import GLOBALS
-import CommentContainer
 import chat_analyser
 from dataclasses import dataclass
 

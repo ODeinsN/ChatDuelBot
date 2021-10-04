@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Set
 import random
-import pytchat
 
 """
 Tracks how many comments used this word and saves the related comment
