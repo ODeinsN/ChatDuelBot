@@ -65,7 +65,7 @@ class CMDInterface:
 > [3]: Show Results
         """)
 
-    def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False, straw_poll_options: dict[int, str] = None):
+    def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False):
         thread = threading.Thread(target=asyncio.run, args=(self.CA.read_chat(stream, translate),))
         thread.start()
 
@@ -91,7 +91,7 @@ class CMDInterface:
 
         for key in self.streams:
             stream = self.streams[key]
-            self.analyse_chat(stream.stream, stream.translation_on, straw_poll_options)
+            self.analyse_chat(stream.stream, stream.translation_on)
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
         while time.time() < start_time + duration:
             time.sleep(1)
