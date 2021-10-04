@@ -48,7 +48,8 @@ class CMDInterface:
         for word in top_words:
             text = word[0]
             amount: int = word[1].get_comment_counter()
-            print(f'"{text}": {amount}')
+            percentage = round(amount/self.CA.comment_counter) * 100
+            print(f'"{text}": {amount}, {percentage}%')
             for _ in range(amount_example_comments if amount >= amount_example_comments else amount):
                 print(f'\t{self.CA.word_distribution_list[text].get_random_comment()}')
 

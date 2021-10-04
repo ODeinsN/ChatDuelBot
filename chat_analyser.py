@@ -64,7 +64,7 @@ class ChatAnalyser:
                 self.word_distribution_list.update({word: CommentContainer.CommentContainer(chat_message)})
         self.comment_counter += 1
 
-    def read_chat(self, chat, translate: bool = False, specific_answers_mode: bool = False, specific_words: list[str] = None):
+    async def read_chat(self, chat, translate: bool = False, specific_answers_mode: bool = False, specific_words: list[str] = None):
         t: Thread
         while chat.is_alive() and self.is_CD_running:
             # await word_list_UI.print_word_distribution()
