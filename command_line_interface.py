@@ -50,7 +50,7 @@ class CMDInterface:
         for word in top_words:
             text = word[0]
             amount: int = word[1].get_comment_counter()
-            percentage = round(amount* 100/self.CA.comment_counter)
+            percentage = round(amount* 100/self.CA.comment_counter, 2)
             print(f'"{self.CA.straw_poll_options[int(text)] if self.CA.straw_poll_mode else text}": {amount}, {percentage}%')
             for _ in range(amount_example_comments if amount >= amount_example_comments else amount):
                 print(f'\t{self.CA.word_distribution_list[text].get_random_comment()}')
