@@ -50,8 +50,8 @@ class CMDInterface:
         for word in top_words:
             text = word[0]
             amount: int = word[1].get_comment_counter()
-            percentage = round(amount/self.CA.comment_counter) * 100
-            print(f'"{text}": {amount}, {percentage}%')
+            percentage = round(amount* 100/self.CA.comment_counter)
+            print(f'"{self.CA.straw_poll_options[int(text)] if self.CA.straw_poll_mode else text}": {amount}, {percentage}%')
             for _ in range(amount_example_comments if amount >= amount_example_comments else amount):
                 print(f'\t{self.CA.word_distribution_list[text].get_random_comment()}')
 
@@ -65,8 +65,8 @@ class CMDInterface:
 > [3]: Show Results
         """)
 
-    def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False, specific_answers_mode: bool = False, specific_words: dict[int, str] = None):
-        thread = threading.Thread(target=asyncio.run, args=(self.CA.read_chat(stream, translate, specific_answers_mode, specific_words),))
+    def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False, straw_poll_options: dict[int, str] = None):
+        thread = threading.Thread(target=asyncio.run, args=(self.CA.read_chat(stream, translate),))
         thread.start()
 
     def start_chat_duel(self):
@@ -78,6 +78,7 @@ class CMDInterface:
 
         straw_poll_options: dict[int, str] = {}
         if straw_poll_mode:
+            self.CA.set_straw_poll_mode(True)
             n: int = self.get_int_input("How many?: ")
             for i in range(n):
                 straw_poll_options.update({i: input(f'enter word {i}: ').lower()})
@@ -90,7 +91,7 @@ class CMDInterface:
 
         for key in self.streams:
             stream = self.streams[key]
-            self.analyse_chat(stream.stream, stream.translation_on, straw_poll_mode, straw_poll_options)
+            self.analyse_chat(stream.stream, stream.translation_on, straw_poll_options)
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
         while time.time() < start_time + duration:
             time.sleep(1)

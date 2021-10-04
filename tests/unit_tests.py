@@ -16,7 +16,7 @@ async def fill_word_list(word: str, n: int, translate: bool = False):
 
 class UnitTestCases(asynctest.TestCase):
     def tearDown(self):
-        GLOBALS.reset()
+        pass
 
     @staticmethod
     async def test_top_comment_list_without_translation():
