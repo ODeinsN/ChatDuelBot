@@ -43,16 +43,27 @@ class ChatAnalyser:
         print(translated)
         return translated
 
-    async def add_comment_to_wordlist(self, chat_message, translate: bool = False):
+    async def add_comment_to_wordlist(self, chat_message, translate: bool = False, straw_poll_mode: bool = False, straw_poll_options: dict[int, str] = None):
         words = chat_message.message.lower().split()
         translator = Translator()
         if words[0] != "!cd" or len(words) <= 1 or len(chat_message.message) > 64:
             return
-
         words.remove(words[0])
 
         words = list(set(words))
-        if translate:
+
+        if straw_poll_mode:
+            if len(words) > 1:
+                return
+            found: bool = False
+            for key in straw_poll_options:
+                if key in words:
+                    found = True
+                    break
+            if not found:
+                return
+
+        if translate and not straw_poll_mode:
             for i in range(len(words)):
                 words[i] = await self.translate_text(words[i], dest='de', src='en')
                 print(words)
@@ -64,19 +75,12 @@ class ChatAnalyser:
                 self.word_distribution_list.update({word: CommentContainer.CommentContainer(chat_message)})
         self.comment_counter += 1
 
-    async def read_chat(self, chat, translate: bool = False, specific_answers_mode: bool = False, specific_words: list[str] = None):
+    async def read_chat(self, chat, translate: bool = False, straw_poll_mode: bool = False, straw_poll_options: dict[int, str] = None):
         t: Thread
         while chat.is_alive() and self.is_CD_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
-                if specific_answers_mode:
-                    found: bool = False
-                    for word in specific_words:
-                        if comment.message.lower().find(word) != -1:
-                            found = True
-                    if not found:
-                        continue
-                t = Thread(target=self.add_comment_to_wordlist, args=(comment, translate,))
+                t = Thread(target=self.add_comment_to_wordlist, args=(comment, translate, straw_poll_mode, straw_poll_options))
                 t.start()
         try:
             t.join()
