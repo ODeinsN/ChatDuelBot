@@ -26,7 +26,8 @@ class CMDInterface:
             print("> ERROR: Connection to stream FAILED.")
             print(type(e), str(e))
 
-    def clear(self):
+    @staticmethod
+    def clear():
         if platform in ["linux", "linux2"]:
             os.system('clear')
         elif platform == "win32":
@@ -58,9 +59,9 @@ class CMDInterface:
     def print_user_menu():
         print("""
 ------------------------------
-> [0]: Exit Programm
-> [1]: Add Livestrean
-> [2]: Start ChatDuell
+> [0]: Exit Program
+> [1]: Add Livestream
+> [2]: Start ChatDuel
 > [3]: Show Results
         """)
 
@@ -104,7 +105,7 @@ class CMDInterface:
         elif command == 1:
             link = input("> Pls enter chat link or ID [youtube.com/video/<ID>]: ")
             name = input("> Pls enter a name: ")
-            translate: bool = input("> Translate answeres?[y/n]: ").lower() in ['y', 'yes']
+            translate: bool = input("> Translate answers?[y/n]: ").lower() in ['y', 'yes']
             self.connect_to_chat(link, name, translate)
 
         elif command == 2:

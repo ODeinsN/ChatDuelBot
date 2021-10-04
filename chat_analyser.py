@@ -9,7 +9,7 @@ from threading import Thread
 
 
 """
-If googletranslator is not working
+If google translator is not working, type in console
 $ pip uninstall googletrans
 $ pip install googletrans==3.1.0a0
 """
@@ -76,7 +76,7 @@ class ChatAnalyser:
         self.comment_counter += 1
 
     async def read_chat(self, chat, translate: bool = False, straw_poll_mode: bool = False, straw_poll_options: dict[int, str] = None):
-        t: Thread
+        t: Thread = Thread()
         while chat.is_alive() and self.is_CD_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
