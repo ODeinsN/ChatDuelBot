@@ -5,3 +5,5 @@ googletrans==3.1.0a0
 asynctest
 async-cache
 google-cloud-translate==2.0.1
+django
+django-extensions Werkzeug

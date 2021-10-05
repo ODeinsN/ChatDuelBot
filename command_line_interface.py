@@ -50,10 +50,23 @@ class CMDInterface:
         for word in top_words:
             text = word[0]
             amount: int = word[1].get_comment_counter()
-            percentage = round(amount* 100/self.CA.comment_counter, 2)
+            percentage = round(amount * 100 / self.CA.comment_counter, 2)
             print(f'"{self.CA.straw_poll_options[int(text)] if self.CA.straw_poll_mode else text}": {amount}, {percentage}%')
             for _ in range(amount_example_comments if amount >= amount_example_comments else amount):
                 print(f'\t{self.CA.word_distribution_list[text].get_random_comment()}')
+
+    def print_result(self, words: str):
+        words = words.split()
+        if self.CA.comment_counter == 0:
+            print('> no comments have been submitted')
+            return
+        if len(set(words).intersection(set(self.CA.word_distribution_list))) == 0:
+            print(f'> "{str(words)}" was never submitted')
+            return
+        for word in words:
+            amount = self.CA.word_distribution_list[word].get_comment_counter()
+            percentage = round(amount * 100 / self.CA.comment_counter, 2)
+            print(f'> "{word}": {amount} votes = {percentage}%')
 
     @staticmethod
     def print_user_menu():
@@ -62,7 +75,8 @@ class CMDInterface:
 > [0]: Exit Program
 > [1]: Add Livestream
 > [2]: Start ChatDuel
-> [3]: Show Results
+> [3]: Show Top Results
+> [4]: Show result for word
         """)
 
     def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False):
@@ -120,8 +134,9 @@ class CMDInterface:
             n_example_comments = self.get_int_input("> Pls enter amount of example comments: ")
             self.print_top_words(n_top_words, n_example_comments)
 
-        # elif command == 4:
-        #     self.print_streams()
+        elif command == 4:
+            words = input("> pls enter word or sentence: ")
+            self.print_result(words)
         else:
             print("> ERROR: Unknown Command")
 
