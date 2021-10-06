@@ -89,14 +89,15 @@ class CMDInterface:
             print("> No Livestreams found.")
             return
 
-        straw_poll_mode: bool = True if input("> Set specific answers [y/n]?: ") in ("y", "yes", "j", "ja") else False
+        straw_poll_mode: bool = bool(input("> Set specific answers [y/n]?: ") in ("y", "yes", "j", "ja"))
 
-        straw_poll_options: dict[int, str] = {}
         if straw_poll_mode:
             self.CA.set_straw_poll_mode(True)
-            n: int = self.get_int_input("How many?: ")
+            n: int = self.get_int_input("> How many options?: ")
             for i in range(n):
-                straw_poll_options.update({i: input(f'enter word {i}: ').lower()})
+                option: str = input(f'enter word {i+1}: ')
+                option.lower()
+                self.CA.straw_poll_options.update({i+1: option})
 
         duration: int = self.get_int_input("> Pls enter duration in seconds: ")
         start_time = time.time()
@@ -104,10 +105,12 @@ class CMDInterface:
         self.CA.reset()
         self.CA.is_CD_running = True
         threads: list[threading.Thread] = []
+
         for key in self.streams:
             stream = self.streams[key]
             threads.append(self.analyse_chat(stream.stream, stream.translation_on))
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
+
         temp = self.CA.comment_counter
         while time.time() < start_time + duration:
             time.sleep(1)
@@ -115,6 +118,7 @@ class CMDInterface:
             comment_counter_delta = self.CA.comment_counter - temp
             temp = self.CA.comment_counter
             print(f'received {comment_counter_delta} comments in the last second.\n')
+        print('> time finished')
         map(threading.Thread.join, threads)
         self.CA.is_CD_running = False
 

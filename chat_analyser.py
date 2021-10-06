@@ -54,7 +54,7 @@ class ChatAnalyser:
     async def add_comment(self, chat_message, translate: bool = False):
         words = chat_message.message.lower().split()
         translator = Translator()
-        if words[0] != "!cd" or len(words) <= 1 or len(chat_message.message) > 64:
+        if words[0] != "!cd" or len(words) < 2 or len(chat_message.message) > 64:
             return
         words.remove(words[0])
 
@@ -64,7 +64,7 @@ class ChatAnalyser:
             if len(words) > 1:
                 return
             found: bool = False
-            for key in self.straw_poll_options:
+            for key in self.straw_poll_options.keys():
                 if str(key) in words:
                     found = True
                     break
@@ -77,6 +77,7 @@ class ChatAnalyser:
 
         for word in words:
             self.add_comment_to_wordlist(chat_message, word)
+
         self.comment_counter += 1
 
     async def read_chat(self, chat, translate: bool = False):
@@ -88,7 +89,6 @@ class ChatAnalyser:
                 t.join()
         try:
             chat.raise_for_status()
-            print(">Time finished.")
         except pytchat.ChatDataFinished:
             print("> Chat data finished.")
         except Exception as e:
