@@ -12,7 +12,7 @@ class StreamChat:
 
     def __init__(self, link: str, name: str, translation_required: bool = False):
         self._name = name
-        self._stream = pytchat.create(link)
+        self._stream = pytchat.create(link, topchat_only=True)
         self._translation_required = translation_required
         self._connected = False
         try:

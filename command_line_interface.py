@@ -112,15 +112,17 @@ class CMDInterface:
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
 
         temp = self.CA.comment_counter
+        wait_time = 1  # seconds
         while time.time() < start_time + duration:
-            time.sleep(1)
+            time.sleep(wait_time)
             print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
             comment_counter_delta = self.CA.comment_counter - temp
             temp = self.CA.comment_counter
-            print(f'received {comment_counter_delta} comments in the last second.\n')
+            print(f'received {round(comment_counter_delta / wait_time, 2)} comments per second.\n')
         print('> time finished')
-        map(threading.Thread.join, threads)
         self.CA.is_CD_running = False
+        for thread in threads:
+            thread.join()
 
     async def execute(self, command: int):
         # clear()

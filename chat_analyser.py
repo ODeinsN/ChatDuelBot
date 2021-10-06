@@ -1,4 +1,5 @@
 import threading
+import time
 from collections import Counter
 from googletrans import Translator
 from cache import async_lru
@@ -8,6 +9,7 @@ import CommentContainer
 from dataclasses import dataclass
 from threading import Thread
 import asyncio
+import datetime
 
 """
 If google translator is not working, type in console
@@ -21,6 +23,7 @@ class ChatAnalyser:
     word_distribution_list: Dict[str, CommentContainer.CommentContainer]
     comment_counter: int
     is_CD_running: bool
+    cd_start_time: datetime.datetime
 
     def __init__(self):
         self.word_distribution_list = {}
@@ -80,10 +83,19 @@ class ChatAnalyser:
 
         self.comment_counter += 1
 
+    def is_message_out_of_time(self, message_time: str, start_time: datetime.datetime) -> bool:
+        x = datetime.datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+        return x < start_time
+
     async def read_chat(self, chat, translate: bool = False):
+        self.cd_start_time = datetime.datetime.now()
         while chat.is_alive() and self.is_CD_running:
             # await word_list_UI.print_word_distribution()
-            for comment in chat.get().sync_items():
+            async for comment in chat.get().async_items():
+                if chat.is_replay():
+                    continue
+                if self.is_message_out_of_time(comment.datetime, start_time=self.cd_start_time):
+                    continue
                 t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
                 t.start()
                 t.join()
