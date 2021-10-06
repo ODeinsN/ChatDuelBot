@@ -82,6 +82,7 @@ class CMDInterface:
     def analyse_chat(self, stream: pytchat.LiveChat, translate: bool = False):
         thread = threading.Thread(target=asyncio.run, args=(self.CA.read_chat(stream, translate),))
         thread.start()
+        return thread
 
     def start_chat_duel(self):
         if len(self.streams) == 0:
@@ -102,14 +103,19 @@ class CMDInterface:
 
         self.CA.reset()
         self.CA.is_CD_running = True
-
+        threads: list[threading.Thread] = []
         for key in self.streams:
             stream = self.streams[key]
-            self.analyse_chat(stream.stream, stream.translation_on)
+            threads.append(self.analyse_chat(stream.stream, stream.translation_on))
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
+        temp = self.CA.comment_counter
         while time.time() < start_time + duration:
             time.sleep(1)
             print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
+            comment_counter_delta = self.CA.comment_counter - temp
+            temp = self.CA.comment_counter
+            print(f'received {comment_counter_delta} comments in the last second.\n')
+        map(threading.Thread.join, threads)
         self.CA.is_CD_running = False
 
     async def execute(self, command: int):
@@ -128,7 +134,7 @@ class CMDInterface:
 
         elif command == 3:
             if self.CA.comment_counter == 0:
-                print("> No Comments have been submitted")
+                print("> No comments have been submitted")
                 return
             n_top_words = self.get_int_input("> Pls enter amount of top words: ")
             n_example_comments = self.get_int_input("> Pls enter amount of example comments: ")

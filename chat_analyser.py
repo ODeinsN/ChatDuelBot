@@ -1,3 +1,4 @@
+import threading
 from collections import Counter
 from googletrans import Translator
 from cache import async_lru
@@ -6,7 +7,7 @@ import pytchat
 import CommentContainer
 from dataclasses import dataclass
 from threading import Thread
-
+import asyncio
 
 """
 If google translator is not working, type in console
@@ -48,10 +49,9 @@ class ChatAnalyser:
     async def translate_text(self, text: str, dest: str, src: str) -> str:
         t = Translator()
         translated = t.translate(text, dest=dest, src=src).text
-        print(translated)
         return translated
 
-    async def add_comment_to_wordlist(self, chat_message, translate: bool = False):
+    async def add_comment(self, chat_message, translate: bool = False):
         words = chat_message.message.lower().split()
         translator = Translator()
         if words[0] != "!cd" or len(words) <= 1 or len(chat_message.message) > 64:
@@ -74,27 +74,30 @@ class ChatAnalyser:
         if translate and not self.straw_poll_mode:
             for i in range(len(words)):
                 words[i] = await self.translate_text(words[i], dest='de', src='en')
-                print(words)
 
         for word in words:
-            if word in self.word_distribution_list:
-                self.word_distribution_list[word].add_comment(chat_message)
-            else:
-                self.word_distribution_list.update({word: CommentContainer.CommentContainer(chat_message)})
+            self.add_comment_to_wordlist(chat_message, word)
         self.comment_counter += 1
 
     async def read_chat(self, chat, translate: bool = False):
-        t: Thread = Thread()
         while chat.is_alive() and self.is_CD_running:
             # await word_list_UI.print_word_distribution()
-            async for comment in chat.get().async_items():
-                t = Thread(target=self.add_comment_to_wordlist, args=(comment, translate))
+            for comment in chat.get().sync_items():
+                t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
                 t.start()
+                t.join()
         try:
-            t.join()
             chat.raise_for_status()
             print(">Time finished.")
         except pytchat.ChatDataFinished:
             print("> Chat data finished.")
         except Exception as e:
             print(type(e), str(e))
+
+    def add_comment_to_wordlist(self, chat_message, word):
+        lock = threading.Lock()
+        with lock:
+            if word in self.word_distribution_list:
+                self.word_distribution_list[word].add_comment(chat_message)
+            else:
+                self.word_distribution_list.update({word: CommentContainer.CommentContainer(chat_message)})

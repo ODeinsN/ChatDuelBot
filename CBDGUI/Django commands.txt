@@ -1,0 +1,22 @@
+$ python manage.py makemigrations <package>
+update Models from <package>
+
+$ python manage.py runserver
+start webserver
+
+$ python manage.py sqlmigrate <package> <migrations_id>
+The sqlmigrate command doesn’t actually run the migration on your database - instead, it prints it to the screen so that you can see what SQL Django thinks is required. It’s useful for checking what Django is going to do or if you have database administrators who require SQL scripts for changes.
+
+$ python manage.py check
+this checks for any problems in your project without making migrations or touching the database.
+
+Change your models (in models.py).
+
+$ python manage.py makemigrations
+to create migrations for those changes
+
+$ python manage.py migrate
+to apply those changes to the database.
+
+$ python manage.py shell
+start the interactive python console
