@@ -95,7 +95,7 @@ class CMDInterface:
             self.CA.set_straw_poll_mode(True)
             n: int = self.get_int_input("> How many options?: ")
             for i in range(n):
-                option: str = input(f'enter word {i+1}: ')
+                option: str = input(f'> enter word {i+1}: ')
                 option.lower()
                 self.CA.straw_poll_options.update({i+1: option})
 
