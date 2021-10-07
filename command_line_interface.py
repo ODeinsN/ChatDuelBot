@@ -52,21 +52,18 @@ class CMDInterface:
             amount: int = word[1].get_comment_counter()
             percentage = round(amount * 100 / self.CA.comment_counter, 2)
             print(f'"{self.CA.straw_poll_options[int(text)] if self.CA.straw_poll_mode else text}": {amount}, {percentage}%')
-            for _ in range(amount_example_comments if amount >= amount_example_comments else amount):
-                print(f'\t{self.CA.word_distribution_list[text].get_random_comment()}')
+            if amount >= amount_example_comments:
+                for _ in range(amount_example_comments):
+                    print(f'\t{self.CA.word_distribution_dict[text].get_random_comment()}')
+            else:
+                for i in range(amount):
+                    print(f'\t{self.CA.word_distribution_dict[text].get_comment(i)}')
 
     def print_result(self, words: str):
+        words.lower()
         words = words.split()
-        if self.CA.comment_counter == 0:
-            print('> no comments have been submitted')
-            return
-        if len(set(words).intersection(set(self.CA.word_distribution_list))) == 0:
-            print(f'> "{str(words)}" was never submitted')
-            return
-        for word in words:
-            amount = self.CA.word_distribution_list[word].get_comment_counter()
-            percentage = round(amount * 100 / self.CA.comment_counter, 2)
-            print(f'> "{word}": {amount} votes = {percentage}%')
+        results = self.CA.get_results(words)
+        print(f'> "{results["word"]}": {results["amount"]} votes = {results["percentage"]}%')
 
     @staticmethod
     def print_user_menu():
@@ -97,7 +94,7 @@ class CMDInterface:
             for i in range(n):
                 option: str = input(f'> enter word {i+1}: ')
                 option.lower()
-                self.CA.straw_poll_options.update({i+1: option})
+                self.CA.add_straw_poll_option(i, option)
 
         duration: int = self.get_int_input("> Pls enter duration in seconds: ")
         start_time = time.time()
@@ -120,7 +117,7 @@ class CMDInterface:
             temp = self.CA.comment_counter
             print(f'received {round(comment_counter_delta / wait_time, 2)} comments per second.\n')
         print('> time finished')
-        self.CA.is_CD_running = False
+        self.CA._is_CD_running = False
         for thread in threads:
             thread.join()
 
@@ -159,8 +156,8 @@ class CMDInterface:
             await self.execute(command)
 
     async def print_word_distribution(self):
-        for key in self.CA.word_distribution_list:
-            print(f'{key}: {self.CA.word_distribution_list[key].comment_counter}')
+        for key in self.CA.word_distribution_dict:
+            print(f'{key}: {self.CA.word_distribution_dict[key]._comment_counter}')
 
     def print_streams(self):
         if len(self.streams) == 0:

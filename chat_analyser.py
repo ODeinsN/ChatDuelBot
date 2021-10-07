@@ -20,31 +20,31 @@ $ pip install googletrans==3.1.0a0
 
 @dataclass
 class ChatAnalyser:
-    word_distribution_list: Dict[str, CommentContainer.CommentContainer]
-    comment_counter: int
-    is_CD_running: bool
-    cd_start_time: datetime.datetime
+    _word_distribution_dict: Dict[str, CommentContainer.CommentContainer]
+    _comment_counter: int
+    _is_CD_running: bool
+    _cd_start_time: datetime.datetime
 
     def __init__(self):
-        self.word_distribution_list = {}
-        self.comment_counter = 0
-        self.is_CD_running = False
-        self.straw_poll_mode: bool = False
-        self.straw_poll_options: dict[int, str] = {}
+        self._word_distribution_dict = {}
+        self._comment_counter = 0
+        self._is_CD_running = False
+        self._straw_poll_mode: bool = False
+        self._straw_poll_options: dict[int, str] = {}
 
     def set_straw_poll_mode(self, mode: bool):
-        self.straw_poll_mode = mode
+        self._straw_poll_mode = mode
 
     def set_straw_poll_options(self, options: list[int, str]):
-        self.straw_poll_options = options
+        self._straw_poll_options = options
 
     def reset(self):
-        self.word_distribution_list.clear()
-        self.comment_counter = 0
-        self.is_CD_running = False
+        self._word_distribution_dict.clear()
+        self._comment_counter = 0
+        self._is_CD_running = False
 
     def get_top_words(self, n: int):
-        c = Counter(self.word_distribution_list)
+        c = Counter(self._word_distribution_dict)
         most_common = c.most_common(n)
         return most_common
 
@@ -63,38 +63,38 @@ class ChatAnalyser:
 
         words = list(set(words))
 
-        if self.straw_poll_mode:
+        if self._straw_poll_mode:
             if len(words) > 1:
                 return
             found: bool = False
-            for key in self.straw_poll_options.keys():
+            for key in self._straw_poll_options.keys():
                 if str(key) in words:
                     found = True
                     break
             if not found:
                 return
 
-        if translate and not self.straw_poll_mode:
+        if translate and not self._straw_poll_mode:
             for i in range(len(words)):
                 words[i] = await self.translate_text(words[i], dest='de', src='en')
 
         for word in words:
             self.add_comment_to_wordlist(chat_message, word)
 
-        self.comment_counter += 1
+        self._comment_counter += 1
 
     def is_message_out_of_time(self, message_time: str, start_time: datetime.datetime) -> bool:
         x = datetime.datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
         return x < start_time
 
     async def read_chat(self, chat, translate: bool = False):
-        self.cd_start_time = datetime.datetime.now()
-        while chat.is_alive() and self.is_CD_running:
+        self._cd_start_time = datetime.datetime.now()
+        while chat.is_alive() and self._is_CD_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
                 if chat.is_replay():
                     continue
-                if self.is_message_out_of_time(comment.datetime, start_time=self.cd_start_time):
+                if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
                     continue
                 t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
                 t.start()
@@ -109,7 +109,60 @@ class ChatAnalyser:
     def add_comment_to_wordlist(self, chat_message, word):
         lock = threading.Lock()
         with lock:
-            if word in self.word_distribution_list:
-                self.word_distribution_list[word].add_comment(chat_message)
+            if word in self._word_distribution_dict:
+                self._word_distribution_dict[word].add_comment(chat_message)
             else:
-                self.word_distribution_list.update({word: CommentContainer.CommentContainer(chat_message)})
+                self._word_distribution_dict.update({word: CommentContainer.CommentContainer(chat_message)})
+
+    """
+    Dictionary entry types are:
+        'word': str
+        'percentage': float
+        'amount': int
+    """
+    def get_results(self, words) -> dict[str, None]:
+        result_dict: dict[str, None] = {}
+        if self._comment_counter == 0:
+            print('> no comments have been submitted')
+            return {}
+        if not self.are_words_in_word_list(words):
+            print(f'> "{str(words)}" was never submitted')
+            return {}
+        for word in words:
+            amount = self._word_distribution_dict[word].get_comment_counter()
+            percentage = round(amount * 100 / self._comment_counter, 2)
+            result_dict.update({'word': word, 'percentage': percentage, 'amount': amount})
+        return result_dict
+
+    # Checks if at least 1 word from parameter "words" exists in word_distribution_dict
+    def are_words_in_word_list(self, words: list[str]):
+        for word in words:
+            if word in self._word_distribution_dict:
+                return True
+        return False
+
+    def get_word_percentage(self, word):
+        amount = self._word_distribution_dict[word].get_comment_counter()
+        return round(amount * 100 / self._comment_counter, 2)
+
+    def get_comment_counter(self):
+        return self._comment_counter
+
+    def add_straw_poll_option(self, index, option):
+        self._straw_poll_options.update({index: option})
+
+    @property
+    def comment_counter(self):
+        return self._comment_counter
+
+    @property
+    def word_distribution_dict(self):
+        return self._word_distribution_dict
+
+    @property
+    def straw_poll_options(self):
+        return self._straw_poll_options
+
+    @property
+    def straw_poll_mode(self):
+        return self._straw_poll_mode

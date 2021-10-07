@@ -26,7 +26,7 @@ class StreamChat:
     def __repr__(self):
         return f'Name: {self._name}\n' \
                f'Translation: {"ON" if self.translation_on else "OFF"}\n' \
-               f'Status: {"CONNECTED" if self._connected else "DISCONNECTED"}'
+               f'Status: {"CONNECTED" if self.check_connection() else "DISCONNECTED"}'
 
     @property
     def stream(self):
@@ -36,13 +36,18 @@ class StreamChat:
     def translation_on(self):
         return self._translation_required
 
-    def connection_checker(self):
+    def check_connection(self):
         while 42:
             time.sleep(1)
             try:
                 self.stream.raise_for_status()
                 self._connected = True
+                return True
             except pytchat.ChatDataFinished:
                 print("> Chat Data Finished")
+                self._connected = False
+                return False
             except Exception as e:
                 print(type(e), str(e))
+                self._connected = False
+                return False
