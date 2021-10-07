@@ -81,6 +81,19 @@ class CMDInterface:
         thread.start()
         return thread
 
+    def init_straw_poll(self):
+        self.CA.set_straw_poll_mode(True)
+        n: int = self.get_int_input("> How many options?: ")
+        for i in range(n):
+            option: str = input(f'> enter word {i + 1}: ')
+            option.lower()
+            self.CA.add_straw_poll_option(i, option)
+
+    def init_streams(self, stream_reader_threads):
+        for key in self.streams:
+            stream = self.streams[key]
+            stream_reader_threads.append(self.analyse_chat(stream.stream, stream.translation_on))
+
     def start_chat_duel(self):
         if len(self.streams) == 0:
             print("> No Livestreams found.")
@@ -89,37 +102,38 @@ class CMDInterface:
         straw_poll_mode: bool = bool(input("> Set specific answers [y/n]?: ") in ("y", "yes", "j", "ja"))
 
         if straw_poll_mode:
-            self.CA.set_straw_poll_mode(True)
-            n: int = self.get_int_input("> How many options?: ")
-            for i in range(n):
-                option: str = input(f'> enter word {i+1}: ')
-                option.lower()
-                self.CA.add_straw_poll_option(i, option)
+            self.init_straw_poll()
 
         duration: int = self.get_int_input("> Pls enter duration in seconds: ")
         start_time = time.time()
 
         self.CA.reset()
         self.CA.is_CD_running = True
-        threads: list[threading.Thread] = []
 
-        for key in self.streams:
-            stream = self.streams[key]
-            threads.append(self.analyse_chat(stream.stream, stream.translation_on))
+        stream_reader_threads: list[threading.Thread] = []
+        self.init_streams(stream_reader_threads)
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
 
         temp = self.CA.comment_counter
         wait_time = 1  # seconds
-        while time.time() < start_time + duration:
-            time.sleep(wait_time)
-            print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
-            comment_counter_delta = self.CA.comment_counter - temp
-            temp = self.CA.comment_counter
-            print(f'received {round(comment_counter_delta / wait_time, 2)} comments per second.\n')
+
+        self.print_comment_receive_stats(duration, start_time, temp, wait_time)
+
         print('> time finished')
         self.CA._is_CD_running = False
-        for thread in threads:
+        for thread in stream_reader_threads:
             thread.join()
+
+    def print_comment_receive_stats(self, duration, start_time, temp, wait_time):
+        while time.time() < start_time + duration:
+            time.sleep(wait_time)
+            print(
+                f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
+            comment_counter_delta = self.CA.comment_counter - temp
+            temp = self.CA.comment_counter
+            comment_rate = round(comment_counter_delta / wait_time, 2)
+            self.CA.append_comment_rate_history(comment_rate)
+            print(f'received {comment_rate} comments per second.\n')
 
     async def execute(self, command: int):
         # clear()
@@ -157,7 +171,7 @@ class CMDInterface:
 
     async def print_word_distribution(self):
         for key in self.CA.word_distribution_dict:
-            print(f'{key}: {self.CA.word_distribution_dict[key]._comment_counter}')
+            print(f'{key}: {self.CA.word_distribution_dict[key].comment_counter}')
 
     def print_streams(self):
         if len(self.streams) == 0:
