@@ -6,6 +6,7 @@ import os
 import asyncio
 from sys import platform
 from StreamChat import StreamChat
+from matplotlib import pyplot as plt
 
 
 class CMDInterface:
@@ -89,11 +90,6 @@ class CMDInterface:
             option.lower()
             self.CA.add_straw_poll_option(i, option)
 
-    def init_streams(self, stream_reader_threads):
-        for key in self.streams:
-            stream = self.streams[key]
-            stream_reader_threads.append(self.analyse_chat(stream.stream, stream.translation_on))
-
     def start_chat_duel(self):
         if len(self.streams) == 0:
             print("> No Livestreams found.")
@@ -111,7 +107,11 @@ class CMDInterface:
         self.CA.is_CD_running = True
 
         stream_reader_threads: list[threading.Thread] = []
-        self.init_streams(stream_reader_threads)
+        for key in self.streams:
+            stream = self.streams[key]
+            stream_reader_threads.append(self.analyse_chat(stream.stream, stream.translation_on))
+        print(stream_reader_threads)
+
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
 
         temp = self.CA.comment_counter
@@ -125,6 +125,7 @@ class CMDInterface:
             thread.join()
 
     def print_comment_receive_stats(self, duration, start_time, temp, wait_time):
+        comment_rate_history = []
         while time.time() < start_time + duration:
             time.sleep(wait_time)
             print(
@@ -133,7 +134,11 @@ class CMDInterface:
             temp = self.CA.comment_counter
             comment_rate = round(comment_counter_delta / wait_time, 2)
             self.CA.append_comment_rate_history(comment_rate)
+            comment_rate_history.append(comment_rate)
             print(f'received {comment_rate} comments per second.\n')
+        plt.plot(comment_rate_history)
+        plt.ylabel('comment rate')
+        plt.show()
 
     async def execute(self, command: int):
         # clear()

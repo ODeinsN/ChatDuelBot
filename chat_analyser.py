@@ -60,6 +60,7 @@ class ChatAnalyser:
         return translated
 
     async def add_comment(self, chat_message, translate: bool = False):
+        print(chat_message)
         words = chat_message.message.lower().split()
         translator = Translator()
         if words[0] != "!cd" or len(words) < 2 or len(chat_message.message) > 64:
@@ -98,6 +99,7 @@ class ChatAnalyser:
         while chat.is_alive() and self._is_CD_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
+                print(comment)
                 if chat.is_replay():
                     continue
                 if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
