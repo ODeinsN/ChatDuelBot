@@ -12,13 +12,6 @@ import asyncio
 import datetime
 import plotly
 
-"""
-If google translator is not working, type in console
-$ pip uninstall googletrans
-$ pip install googletrans==3.1.0a0
-"""
-
-
 @dataclass
 class ChatAnalyser:
     _word_distribution_dict: Dict[str, CommentContainer.CommentContainer]
@@ -27,6 +20,7 @@ class ChatAnalyser:
     _cd_start_time: datetime.datetime
     _comment_counter_history: list[int]
     _comment_rate_history: list[float]
+    _command_prefix: str
 
     def __init__(self):
         self._word_distribution_dict = {}
@@ -36,6 +30,7 @@ class ChatAnalyser:
         self._straw_poll_options: dict[int, str] = {}
         self._comment_counter_history = []
         self._comment_rate_history = []
+        self._command_prefix = '!a '
 
     def set_straw_poll_mode(self, mode: bool):
         self._straw_poll_mode = mode
@@ -60,12 +55,14 @@ class ChatAnalyser:
         return translated
 
     async def add_comment(self, chat_message, translate: bool = False):
-        words = chat_message.message.lower().split()
+        message: str = chat_message.message.lower()
         translator = Translator()
-        if words[0] != "!cd" or len(words) < 2 or len(chat_message.message) > 64:
+        if not message.startswith(self._command_prefix) or message == self._command_prefix or len(message) > 64:
             return
-        words.remove(words[0])
+        message = message.removeprefix(self._command_prefix)
+        words: list[str] = message.lower().split()
 
+        # remove duplicate words
         words = list(set(words))
 
         if self._straw_poll_mode:
