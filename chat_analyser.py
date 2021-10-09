@@ -60,7 +60,6 @@ class ChatAnalyser:
         return translated
 
     async def add_comment(self, chat_message, translate: bool = False):
-        print(chat_message)
         words = chat_message.message.lower().split()
         translator = Translator()
         if words[0] != "!cd" or len(words) < 2 or len(chat_message.message) > 64:
@@ -90,18 +89,18 @@ class ChatAnalyser:
         self._comment_counter += 1
         self._comment_counter_history.append(self.comment_counter)
 
+    # adding plus 15 seconds to compensate time differences between local and youtube time
     def is_message_out_of_time(self, message_time: str, start_time: datetime.datetime) -> bool:
-        x = datetime.datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S')
+        x = datetime.datetime.strptime(message_time, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(seconds=15)
         return x < start_time
 
     async def read_chat(self, chat, translate: bool = False):
         self._cd_start_time = datetime.datetime.now()
+        print(self._cd_start_time)
         while chat.is_alive() and self._is_CD_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
-                print(comment)
-                if chat.is_replay():
-                    continue
+                print(comment.datetime)
                 if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
                     continue
                 t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
@@ -174,6 +173,14 @@ class ChatAnalyser:
     @property
     def straw_poll_mode(self):
         return self._straw_poll_mode
+
+    @property
+    def is_CD_running(self) -> bool:
+        return self._is_CD_running
+
+    @is_CD_running.setter
+    def is_cd_running(self, a: bool):
+        self._is_CD_running = a
 
     def plot_message_counter(self):
         return

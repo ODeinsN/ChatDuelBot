@@ -8,3 +8,4 @@ google-cloud-translate==2.0.1
 django
 django-extensions Werkzeug
 plotly
+async_lru

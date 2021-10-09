@@ -61,7 +61,7 @@ class CMDInterface:
                     print(f'\t{self.CA.word_distribution_dict[text].get_comment(i)}')
 
     def print_result(self, words: str):
-        words.lower()
+        words = words.lower()
         words = words.split()
         results = self.CA.get_results(words)
         print(f'> "{results["word"]}": {results["amount"]} votes = {results["percentage"]}%')
@@ -86,9 +86,9 @@ class CMDInterface:
         self.CA.set_straw_poll_mode(True)
         n: int = self.get_int_input("> How many options?: ")
         for i in range(n):
-            option: str = input(f'> enter word {i + 1}: ')
+            option: str = input(f'> enter word {i+1}: ')
             option.lower()
-            self.CA.add_straw_poll_option(i, option)
+            self.CA.add_straw_poll_option(i+1, option)
 
     def start_chat_duel(self):
         if len(self.streams) == 0:
@@ -104,13 +104,12 @@ class CMDInterface:
         start_time = time.time()
 
         self.CA.reset()
-        self.CA.is_CD_running = True
+        self.CA._is_CD_running = True
 
         stream_reader_threads: list[threading.Thread] = []
         for key in self.streams:
             stream = self.streams[key]
             stream_reader_threads.append(self.analyse_chat(stream.stream, stream.translation_on))
-        print(stream_reader_threads)
 
         # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
 
@@ -128,8 +127,7 @@ class CMDInterface:
         comment_rate_history = []
         while time.time() < start_time + duration:
             time.sleep(wait_time)
-            print(
-                f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
+            print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
             comment_counter_delta = self.CA.comment_counter - temp
             temp = self.CA.comment_counter
             comment_rate = round(comment_counter_delta / wait_time, 2)
