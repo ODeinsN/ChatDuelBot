@@ -1,17 +1,15 @@
 import threading
-import time
 from collections import Counter
 from googletrans import Translator
 from cache import async_lru
-from typing import Dict
 import pytchat
 import CommentContainer
 from dataclasses import dataclass
 from threading import Thread
 import asyncio
 import datetime
-import plotly
 import txt_reader
+from GUI_data_interface import *
 
 
 @dataclass
@@ -20,8 +18,6 @@ class ChatAnalyser:
     _comment_counter: int
     _is_cd_running: bool
     _cd_start_time: datetime.datetime
-    _comment_counter_history: list[int]
-    _comment_rate_history: list[float]
     _command_prefix: str
     _banned_words: set[str]
 
@@ -31,8 +27,6 @@ class ChatAnalyser:
         self._is_cd_running = False
         self._straw_poll_mode: bool = False
         self._straw_poll_options: dict[int, str] = {}
-        self._comment_counter_history = []
-        self._comment_rate_history = []
         self._command_prefix = '!'
         self._banned_words = set()
         self._banned_words.update(txt_reader.get_word_set('files/bad_words_german.txt'))
@@ -96,7 +90,7 @@ class ChatAnalyser:
             self.add_comment_to_wordlist(chat_message, word)
 
         self._comment_counter += 1
-        self._comment_counter_history.append(self.comment_counter)
+        comment_counter_history.append(self.comment_counter)
 
     # adding plus 15 seconds to compensate time differences between local and youtube time
     def is_message_out_of_time(self, message_time: str, start_time: datetime.datetime) -> bool:
@@ -192,11 +186,6 @@ class ChatAnalyser:
 
     def plot_message_counter(self):
         return
-
-    def append_comment_rate_history(self, rate):
-        if rate < 0:
-            return
-        self._comment_rate_history.append(rate)
 
     @property
     def banned_words(self):

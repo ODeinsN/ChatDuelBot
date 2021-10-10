@@ -6,7 +6,7 @@ import os
 import asyncio
 from sys import platform
 from StreamChat import StreamChat
-from matplotlib import pyplot as plt
+from GUI_data_interface import *
 
 
 class CMDInterface:
@@ -124,19 +124,14 @@ class CMDInterface:
             thread.join()
 
     def print_comment_receive_stats(self, duration, start_time, temp, wait_time):
-        comment_rate_history = []
         while time.time() < start_time + duration:
             time.sleep(wait_time)
             print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
             comment_counter_delta = self.CA.comment_counter - temp
             temp = self.CA.comment_counter
             comment_rate = round(comment_counter_delta / wait_time, 2)
-            self.CA.append_comment_rate_history(comment_rate)
             comment_rate_history.append(comment_rate)
             print(f'received {comment_rate} comments per second.\n')
-        plt.plot(comment_rate_history)
-        plt.ylabel('comment rate')
-        plt.show()
 
     async def execute(self, command: int):
         # clear()

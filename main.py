@@ -1,6 +1,5 @@
 from command_line_interface import CMDInterface
 import asyncio
-import txt_reader
 
 
 def main():
