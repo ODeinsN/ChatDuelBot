@@ -11,26 +11,34 @@ from threading import Thread
 import asyncio
 import datetime
 import plotly
+import txt_reader
+
 
 @dataclass
 class ChatAnalyser:
     _word_distribution_dict: Dict[str, CommentContainer.CommentContainer]
     _comment_counter: int
-    _is_CD_running: bool
+    _is_cd_running: bool
     _cd_start_time: datetime.datetime
     _comment_counter_history: list[int]
     _comment_rate_history: list[float]
     _command_prefix: str
+    _banned_words: set[str]
 
     def __init__(self):
         self._word_distribution_dict = {}
         self._comment_counter = 0
-        self._is_CD_running = False
+        self._is_cd_running = False
         self._straw_poll_mode: bool = False
         self._straw_poll_options: dict[int, str] = {}
         self._comment_counter_history = []
         self._comment_rate_history = []
         self._command_prefix = '!a '
+        self._banned_words = set()
+        self._banned_words.update(txt_reader.get_word_dict('files/bad_words_german.txt'))
+
+    def is_word_banned(self, word: str) -> bool:
+        return word in self._banned_words
 
     def set_straw_poll_mode(self, mode: bool):
         self._straw_poll_mode = mode
@@ -41,7 +49,7 @@ class ChatAnalyser:
     def reset(self):
         self._word_distribution_dict.clear()
         self._comment_counter = 0
-        self._is_CD_running = False
+        self._is_cd_running = False
 
     def get_top_words(self, n: int):
         c = Counter(self._word_distribution_dict)
@@ -64,6 +72,10 @@ class ChatAnalyser:
 
         # remove duplicate words
         words = list(set(words))
+
+        for word in words:
+            if self.is_word_banned(word):
+                return
 
         if self._straw_poll_mode:
             if len(words) > 1:
@@ -94,10 +106,11 @@ class ChatAnalyser:
     async def read_chat(self, chat, translate: bool = False):
         self._cd_start_time = datetime.datetime.now()
         print(self._cd_start_time)
-        while chat.is_alive() and self._is_CD_running:
+        while chat.is_alive() and self._is_cd_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
-                print(comment.datetime)
+                if chat.is_replay_mode():
+                    continue
                 if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
                     continue
                 t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
@@ -172,12 +185,12 @@ class ChatAnalyser:
         return self._straw_poll_mode
 
     @property
-    def is_CD_running(self) -> bool:
-        return self._is_CD_running
+    def is_cd_running(self) -> bool:
+        return self._is_cd_running
 
-    @is_CD_running.setter
+    @is_cd_running.setter
     def is_cd_running(self, a: bool):
-        self._is_CD_running = a
+        self._is_cd_running = a
 
     def plot_message_counter(self):
         return
@@ -186,3 +199,11 @@ class ChatAnalyser:
         if rate < 0:
             return
         self._comment_rate_history.append(rate)
+
+    @property
+    def banned_words(self):
+        return self._banned_words
+
+    @banned_words.setter
+    def banned_words(self, val):
+        self._banned_words = val

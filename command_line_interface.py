@@ -104,7 +104,7 @@ class CMDInterface:
         start_time = time.time()
 
         self.CA.reset()
-        self.CA._is_CD_running = True
+        self.CA._is_cd_running = True
 
         stream_reader_threads: list[threading.Thread] = []
         for key in self.streams:
@@ -119,7 +119,7 @@ class CMDInterface:
         self.print_comment_receive_stats(duration, start_time, temp, wait_time)
 
         print('> time finished')
-        self.CA._is_CD_running = False
+        self.CA._is_cd_running = False
         for thread in stream_reader_threads:
             thread.join()
 
