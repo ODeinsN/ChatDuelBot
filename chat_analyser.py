@@ -16,7 +16,7 @@ import txt_reader
 
 @dataclass
 class ChatAnalyser:
-    _word_distribution_dict: Dict[str, CommentContainer.CommentContainer]
+    _word_distribution_dict: dict[str, CommentContainer.CommentContainer]
     _comment_counter: int
     _is_cd_running: bool
     _cd_start_time: datetime.datetime
@@ -33,9 +33,9 @@ class ChatAnalyser:
         self._straw_poll_options: dict[int, str] = {}
         self._comment_counter_history = []
         self._comment_rate_history = []
-        self._command_prefix = '!a '
+        self._command_prefix = '!'
         self._banned_words = set()
-        self._banned_words.update(txt_reader.get_word_dict('files/bad_words_german.txt'))
+        self._banned_words.update(txt_reader.get_word_set('files/bad_words_german.txt'))
 
     def is_word_banned(self, word: str) -> bool:
         return word in self._banned_words
@@ -109,8 +109,6 @@ class ChatAnalyser:
         while chat.is_alive() and self._is_cd_running:
             # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
-                if chat.is_replay_mode():
-                    continue
                 if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
                     continue
                 t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))

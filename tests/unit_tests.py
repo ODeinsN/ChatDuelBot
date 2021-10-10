@@ -1,5 +1,5 @@
 import asynctest
-import chat_analyser
+from chat_analyser import ChatAnalyser
 from dataclasses import dataclass
 
 
@@ -8,10 +8,11 @@ class ChatMessage():
     message: str
 
 
-async def fill_word_list(word: str, n: int, translate: bool = False):
+async def fill_word_list(ca: ChatAnalyser, word: str, n: int, translate: bool = False):
+    prefix = '!a '
     for _ in range(n):
-        c = ChatMessage(f"!cd {word}")
-        await chat_analyser.add_comment_to_wordlist(c, translate)
+        c = ChatMessage(f"{prefix}{word}")
+        await ca.add_comment_to_wordlist(c, translate)
 
 
 class UnitTestCases(asynctest.TestCase):
@@ -20,19 +21,21 @@ class UnitTestCases(asynctest.TestCase):
 
     @staticmethod
     async def test_top_comment_list_without_translation():
-        await fill_word_list("bier", 10)
-        await fill_word_list("tee", 15)
-        await fill_word_list("beer", 6)
-        top = chat_analyser.get_top_words(3)
+        ca = ChatAnalyser()
+        await fill_word_list(ca, "bier", 10)
+        await fill_word_list(ca, "tee", 15)
+        await fill_word_list(ca, "beer", 6)
+        top = ca.get_top_words(3)
         print(top)
         assert top[0][0] == "tee"
 
     @staticmethod
     async def test_top_comment_translation():
-        await fill_word_list("bier", 10)
-        await fill_word_list("tee", 15)
-        await fill_word_list("Beer", 6, True)
-        top = chat_analyser.get_top_words(3)
+        ca = ChatAnalyser()
+        await fill_word_list(ca, "bier", 10)
+        await fill_word_list(ca, "tee", 15)
+        await fill_word_list(ca, "Beer", 6, True)
+        top = ca.get_top_words(3)
         print(top)
         assert top[0][0] == "bier"
 
