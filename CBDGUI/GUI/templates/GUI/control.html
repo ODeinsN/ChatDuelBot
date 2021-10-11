@@ -1,0 +1,16 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'GUI/style.css' %}">
+
+<section>
+    {% if comment_counter_history %}
+        <h1>Chat Duel Results</h1>
+        <h3>Top 5 answers:</h3>
+        <ul>
+            <li>{{ comment_rate_history.0 }}</li>
+            <li>{{ comment_rate_history.1 }}</li>
+            <li>{{ comment_rate_history.2 }}</li>
+            <li>{{ comment_rate_history.3 }}</li>
+            <li>{{ comment_rate_history.4 }}</li>
+        </ul>
+    {% endif  %}
+</section>

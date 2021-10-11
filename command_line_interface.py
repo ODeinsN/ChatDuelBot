@@ -6,7 +6,7 @@ import os
 import asyncio
 from sys import platform
 from StreamChat import StreamChat
-from GUI_data_interface import *
+from CBDGUI.GUI.models import WebData
 
 
 class CMDInterface:
@@ -130,7 +130,10 @@ class CMDInterface:
             comment_counter_delta = self.CA.comment_counter - temp
             temp = self.CA.comment_counter
             comment_rate = round(comment_counter_delta / wait_time, 2)
-            comment_rate_history.append(comment_rate)
+
+            WebData.comment_counter_history.append(self.CA.comment_counter)
+            WebData.comment_rate_history.append(comment_rate)
+
             print(f'received {comment_rate} comments per second.\n')
 
     async def execute(self, command: int):

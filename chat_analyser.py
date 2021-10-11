@@ -9,7 +9,6 @@ from threading import Thread
 import asyncio
 import datetime
 import txt_reader
-from GUI_data_interface import *
 
 
 @dataclass
@@ -90,7 +89,6 @@ class ChatAnalyser:
             self.add_comment_to_wordlist(chat_message, word)
 
         self._comment_counter += 1
-        comment_counter_history.append(self.comment_counter)
 
     # adding plus 15 seconds to compensate time differences between local and youtube time
     def is_message_out_of_time(self, message_time: str, start_time: datetime.datetime) -> bool:
