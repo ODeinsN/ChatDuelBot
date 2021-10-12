@@ -104,9 +104,9 @@ def control(request):
             'top_words': top_words,
             'graph_size': graph_size
         }
-    print(f'{top_words=}')
-    print(f'{WebData.comment_rate_history=}')
-    print(f'{WebData.comment_rate_history=}')
+    # print(f'{top_words=}')
+    # print(f'{WebData.comment_rate_history=}')
+    # print(f'{WebData.comment_rate_history=}')
 
     # return HttpResponseRedirect(reverse('GUI:control'))
     return render(request, 'GUI/control.html', context)

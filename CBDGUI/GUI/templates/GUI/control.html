@@ -7,6 +7,7 @@
 <head>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <title>Chat Duel Results</title>
+        <META http-equiv="refresh" content="0.5">
 </head>
 
 <body>
@@ -49,18 +50,6 @@
         </section>
         </div>
         {% endblock content%}
-
-        <script language="javascript">
-                var prefix = (window.location.protocol == 'https:') ? 'wss://' : 'ws://';
-                var ws_url = prefix + window.location.host + '/ws/ticks/';
-                var ticksSocket = new ReconnectingWebSocket(ws_url);
-
-                ticksSocket.onmessage = function(event) {
-                        var data = JSON.parse(event.data);
-                        console.log('data', data);
-                // do whatever required with received data ...
-                 };
-        </script>
 </body>
 
 
