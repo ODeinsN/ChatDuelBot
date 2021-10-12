@@ -9,3 +9,5 @@ django
 django-extensions Werkzeug
 plotly
 async_lru
+numpy
+pandas

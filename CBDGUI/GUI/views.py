@@ -1,10 +1,18 @@
+import time
+
+import numpy
+import pandas as pandas
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 # from . models import Question, Choice
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from . models import WebData
+from .models import WebData
+from plotly.offline import plot
+import plotly.graph_objects as go
+import plotly.express as px
+from typing import Any
 
 
 # class IndexView(generic.ListView):
@@ -46,7 +54,7 @@ from . models import WebData
 #     try:
 #         selected_choice = question.choice_set.get(pk=request.POST['choice'])
 #     except (KeyError, Choice.DoesNotExist):
-#         return render(request, 'GUI/detail.html', {'question': question, 'error_message': "You didn't select a choice.",})
+#     return render(request, 'GUI/detail.html', {'question': question, 'error_message': "You didn't select a choice.",})
 #     else:
 #         selected_choice.votes += 1
 #         selected_choice.save()
@@ -54,8 +62,43 @@ from . models import WebData
 
 
 def control(request):
-    context = {'comment_rate_history': WebData.comment_rate_history,
-               'comment_counter_history': WebData.comment_counter_history,
-               'range': [x for x in range(5)]}
+    # time.sleep(1)
+    template = 'plotly_dark'
+    comment_rate_df = pandas.DataFrame(dict(
+        comment_rate=WebData.comment_rate_history
+    ))
+    comment_counter_df = pandas.DataFrame(dict(
+        comment_counter=WebData.comment_counter_history
+    ))
+    comment_rate_fig = px.line(
+        comment_rate_df,
+        title=f"current: {WebData.comment_rate_history[-1]}",
+        template=template,
+        height=500,
+        width=750
+    )
 
+    comment_counter_fig = px.line(
+        comment_counter_df,
+        title=f"current: {WebData.comment_counter_history[-1]}",
+        template=template,
+        height=500,
+        width=750
+    )
+
+    comment_rate_div = plot(comment_rate_fig, auto_open=False, output_type='div')
+    comment_counter_div = plot(comment_counter_fig, auto_open=False, output_type='div')
+
+    top_words: list[dict[str, Any]] = WebData.top_comments
+    context = \
+        {
+            'range': [x for x in range(5)],
+            'comment_rate_div': comment_rate_div,
+            'comment_counter_div': comment_counter_div,
+            'top_words': top_words
+        }
+    print(f'{WebData.comment_rate_history=}')
+    print(f'{WebData.comment_rate_history=}')
+
+    # return HttpResponseRedirect(reverse('GUI:control'))
     return render(request, 'GUI/control.html', context)

@@ -3,17 +3,18 @@ from collections import Counter
 from googletrans import Translator
 from cache import async_lru
 import pytchat
-import CommentContainer
+from CommentContainer import CommentContainer
 from dataclasses import dataclass
 from threading import Thread
 import asyncio
 import datetime
 import txt_reader
+from typing import Any
 
 
 @dataclass
 class ChatAnalyser:
-    _word_distribution_dict: dict[str, CommentContainer.CommentContainer]
+    _word_distribution_dict: dict[str, CommentContainer]
     _comment_counter: int
     _is_cd_running: bool
     _cd_start_time: datetime.datetime
@@ -119,7 +120,7 @@ class ChatAnalyser:
             if word in self._word_distribution_dict:
                 self._word_distribution_dict[word].add_comment(chat_message)
             else:
-                self._word_distribution_dict.update({word: CommentContainer.CommentContainer(chat_message)})
+                self._word_distribution_dict.update({word: CommentContainer(chat_message)})
 
     """
     Dictionary entry types are:
@@ -182,9 +183,6 @@ class ChatAnalyser:
     def is_cd_running(self, a: bool):
         self._is_cd_running = a
 
-    def plot_message_counter(self):
-        return
-
     @property
     def banned_words(self):
         return self._banned_words
@@ -192,3 +190,28 @@ class ChatAnalyser:
     @banned_words.setter
     def banned_words(self, val):
         self._banned_words = val
+
+    def convert_counter_entry_to_dict(self, entry: tuple[str, CommentContainer], amount_example_comments: int) -> dict[str, Any]:
+        text = entry[0]
+        comment_list: list[str] = []
+        amount: int = entry[1].get_comment_counter()
+        percentage = round(amount * 100 / self.comment_counter, 2)
+        pool_text = self.straw_poll_options[int(text)] if self.straw_poll_mode else text
+        if amount >= amount_example_comments:
+            for _ in range(amount_example_comments):
+                comment_list.append(self._word_distribution_dict[text].get_random_comment())
+        else:
+            for i in range(amount):
+                comment_list.append(self.word_distribution_dict[text].get_comment(i))
+        data: dict[str, Any] = {
+            'text': text,
+            'amount': amount,
+            'percentage': percentage,
+            'pool_text': pool_text,
+            'comment_list': comment_list
+        }
+        return data
+
+    @property
+    def command_prefix(self):
+        return self._command_prefix

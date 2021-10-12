@@ -1,12 +1,17 @@
+import dataclasses
+
 from django.db import models
 import datetime
 from django.utils import timezone
+from typing import Any
+from dataclasses import dataclass
 
 
 class WebData:
-    comment_rate_history: list[float] = [1, 2, 3, 4, 5, 6]
-    comment_counter_history: list[int] = [0]
-    _top_comments: list[dict[str, object]] = []
+    comment_rate_history: list[float] = [0, 14.5, 2.3, 0.7, 1.9]
+    comment_counter_history: list[int] = [0, 10, 24, 30, 60]
+    top_comments: list[dict[str, Any]] = [{'text': 'test1', 'amount': 10, 'percentage': "15.2", 'comment_list': ["example comment 1", "example comment 2"]},
+                                          {'text': 'test2', 'amount': 15, 'percentage': "15.2", 'comment_list': ["example comment 1", "example comment 2"]}]
 
     # @property
     # def comment_rate_history(self):

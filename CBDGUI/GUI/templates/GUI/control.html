@@ -1,16 +1,45 @@
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'GUI/style.css' %}">
+<style>
+        .indent-1 {float: left; align: center;}
+        .indent-1 section {width: 50%; float: left;}line;}
+</style>
 
-<section>
-    {% if comment_counter_history %}
-        <h1>Chat Duel Results</h1>
-        <h3>Top 5 answers:</h3>
-        <ul>
-            <li>{{ comment_rate_history.0 }}</li>
-            <li>{{ comment_rate_history.1 }}</li>
-            <li>{{ comment_rate_history.2 }}</li>
-            <li>{{ comment_rate_history.3 }}</li>
-            <li>{{ comment_rate_history.4 }}</li>
-        </ul>
-    {% endif  %}
-</section>
+<header>
+        <title>Chat Duel Results</title>
+</header>
+
+<body>
+        <link rel="stylesheet" type="text/css" href="{% static 'GUI/style.css' %}">
+        <section class="indent-1">
+                <h1>Chat Duel Results</h1>
+                <section>
+                        <h3>comment rate per second</h3>
+                        <div class="graph left" style="display: block; text-align: center;">
+                            {{ comment_rate_div|safe }}
+                        </div>
+                </section>
+                <section>
+                        <h3>comment counter history</h3>
+                        <div class="graph right" style="display: block; text-align: center;">
+                            {{ comment_counter_div|safe }}
+                        </div>
+                </section>
+                <section>
+                        <h3>Top Words</h3>
+                        <ol>
+                                {% if top_words %}
+                                {% for word in top_words %}
+                                 <li>{{word.text}}: {{word.amount}} = {{word.percentage}}%</li>
+                                <ul>
+                                        {% for comment in word.comment_list %}
+                                        <li>{{comment}}</li>
+                                        {% endfor %}
+                                </ul>
+                                {% endfor %}
+                                {% endif %}
+                        </ol>
+                </section>
+        </section>
+</body>
+
+

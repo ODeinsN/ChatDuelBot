@@ -49,16 +49,12 @@ class CMDInterface:
             print("> No comments submitted")
             return
         for word in top_words:
-            text = word[0]
-            amount: int = word[1].get_comment_counter()
-            percentage = round(amount * 100 / self.CA.comment_counter, 2)
-            print(f'"{self.CA.straw_poll_options[int(text)] if self.CA.straw_poll_mode else text}": {amount}, {percentage}%')
-            if amount >= amount_example_comments:
-                for _ in range(amount_example_comments):
-                    print(f'\t{self.CA.word_distribution_dict[text].get_random_comment()}')
-            else:
-                for i in range(amount):
-                    print(f'\t{self.CA.word_distribution_dict[text].get_comment(i)}')
+            data = self.CA.convert_counter_entry_to_dict(word, amount_example_comments)
+            text = data['text'] if not self.CA.straw_poll_mode else data['pool_text']
+            print(f'"{text}": {data["amount"]}, {data["percentage"]}%')
+            for comment_text in data['comment_list']:
+                print(f'\t{comment_text}')
+            WebData.top_comments.append(data)
 
     def print_result(self, words: str):
         words = words.lower()
@@ -91,6 +87,11 @@ class CMDInterface:
             self.CA.add_straw_poll_option(i+1, option)
 
     def start_chat_duel(self):
+        WebData.comment_rate_history.clear()
+        WebData.comment_counter_history.clear()
+        WebData.top_comments.clear()
+
+        print(f'command prefix: {self.CA.command_prefix}')
         if len(self.streams) == 0:
             print("> No Livestreams found.")
             return
