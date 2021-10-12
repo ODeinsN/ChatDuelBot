@@ -1,18 +1,12 @@
-import time
-
-import numpy
-import pandas as pandas
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-# from . models import Question, Choice
-from django.urls import reverse
-from django.views import generic
-from django.utils import timezone
-from .models import WebData
-from plotly.offline import plot
-import plotly.graph_objects as go
-import plotly.express as px
 from typing import Any
+
+import pandas as pandas
+import plotly.express as px
+from django.shortcuts import render
+from plotly.offline import plot
+
+# from . models import Question, Choice
+from .models import WebData
 from .utils import WebDataUpdater as wdu
 
 
@@ -93,7 +87,8 @@ def control(request):
     )
 
     comment_rate_div = plot(comment_rate_fig, auto_open=False, output_type='div', include_plotlyjs=False, link_text="")
-    comment_counter_div = plot(comment_counter_fig, auto_open=False, output_type='div', include_plotlyjs=False, link_text="")
+    comment_counter_div = plot(comment_counter_fig, auto_open=False, output_type='div', include_plotlyjs=False,
+                               link_text="")
 
     top_words: list[dict[str, Any]] = WebData.top_comments
     context = \

@@ -1,6 +1,7 @@
-from command_line_interface import CMDInterface
 import asyncio
+
 import CBDGUI.GUI.utils.WebDataUpdater as wdu
+from command_line_interface import CMDInterface
 
 
 def create_test_date():
@@ -9,8 +10,10 @@ def create_test_date():
     for x in comment_rate:
         comment_counter.append(comment_counter[-1] + x)
     top_words = [
-        {'text': 'test1', 'amount': 10, 'percentage': f'{round(10/27, 2) * 100}', 'comment_list': ["example comment 1", "example comment 2"]},
-        {'text': 'test2', 'amount': 17, 'percentage': f'{round(17/27, 2) * 100}', 'comment_list': ["example comment 1", "example comment 2"]}]
+        {'text': 'test1', 'amount': 10, 'percentage': f'{round(10 / 27, 2) * 100}',
+         'comment_list': ["example comment 1", "example comment 2"]},
+        {'text': 'test2', 'amount': 17, 'percentage': f'{round(17 / 27, 2) * 100}',
+         'comment_list': ["example comment 1", "example comment 2"]}]
 
     wdu.write_data_into_file(comment_rate=comment_rate, comment_counter=comment_counter, top_words=top_words)
 

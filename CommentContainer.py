@@ -1,6 +1,6 @@
+import random
 from dataclasses import dataclass
 from typing import Set
-import random
 
 """
 Tracks how many comments used this word and saves the related comment

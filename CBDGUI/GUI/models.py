@@ -1,10 +1,4 @@
-import dataclasses
-
-from django.db import models
-import datetime
-from django.utils import timezone
 from typing import Any
-from dataclasses import dataclass
 
 
 class WebData:

@@ -1,15 +1,17 @@
-import threading
-from collections import Counter
-from googletrans import Translator
-from cache import async_lru
-import pytchat
-from CommentContainer import CommentContainer
-from dataclasses import dataclass
-from threading import Thread
 import asyncio
 import datetime
-import txt_reader
+import threading
+from collections import Counter
+from dataclasses import dataclass
+from threading import Thread
 from typing import Any
+
+import pytchat
+from cache import async_lru
+from googletrans import Translator
+
+import txt_reader
+from CommentContainer import CommentContainer
 
 
 @dataclass
@@ -192,7 +194,8 @@ class ChatAnalyser:
     def banned_words(self, val):
         self._banned_words = val
 
-    def convert_counter_entry_to_dict(self, entry: tuple[str, CommentContainer], amount_example_comments: int) -> dict[str, Any]:
+    def convert_counter_entry_to_dict(self, entry: tuple[str, CommentContainer], amount_example_comments: int) -> dict[
+        str, Any]:
         text = entry[0]
         comment_list: list[str] = []
         amount: int = entry[1].get_comment_counter()

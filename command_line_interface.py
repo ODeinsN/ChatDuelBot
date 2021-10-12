@@ -1,14 +1,15 @@
+import asyncio
+import os
 import threading
 import time
-import pytchat
-import chat_analyser
-import os
-import asyncio
 from sys import platform
-from StreamChat import StreamChat
-from CBDGUI.GUI.models import WebData
-from typing import Any
+
+import pytchat
+
 import CBDGUI.GUI.utils.WebDataUpdater as wdu
+import chat_analyser
+from CBDGUI.GUI.models import WebData
+from StreamChat import StreamChat
 
 
 class CMDInterface:
@@ -94,9 +95,9 @@ class CMDInterface:
         self.CA.set_straw_poll_mode(True)
         n: int = self.get_int_input("> How many options?: ")
         for i in range(n):
-            option: str = input(f'> enter word {i+1}: ')
+            option: str = input(f'> enter word {i + 1}: ')
             option.lower()
-            self.CA.add_straw_poll_option(i+1, option)
+            self.CA.add_straw_poll_option(i + 1, option)
 
     def start_chat_duel(self):
         WebData.comment_rate_history.clear()
@@ -139,7 +140,8 @@ class CMDInterface:
     def print_comment_receive_stats(self, duration, start_time, temp, wait_time):
         while time.time() < start_time + duration:
             time.sleep(wait_time)
-            print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
+            print(
+                f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
             comment_counter_delta = self.CA.comment_counter - temp
             temp = self.CA.comment_counter
             comment_rate = round(comment_counter_delta / wait_time, 2)

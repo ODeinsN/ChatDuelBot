@@ -1,6 +1,8 @@
-import asynctest
-from chat_analyser import ChatAnalyser
 from dataclasses import dataclass
+
+import asynctest
+
+from chat_analyser import ChatAnalyser
 
 
 @dataclass(frozen=True, eq=True)

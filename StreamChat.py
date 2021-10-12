@@ -1,6 +1,7 @@
-from dataclasses import dataclass
-import pytchat
 import time
+from dataclasses import dataclass
+
+import pytchat
 
 
 @dataclass

@@ -1,5 +1,5 @@
 <form action="{% url 'GUI:vote' question.id %}"
-method="post">
+      method="post">
     {% csrf_token %}
     <fieldset>
         <legend>
