@@ -18,22 +18,12 @@ li {
 
 .graph {
     width: 50%;
-    height: 250px;
     overflow: auto;
 }
 
 .graph img {
     width: 100%;
-    height: 250px;
     overflow: auto;
-}
-
-#menu ol{
-    list-style: none;
-}
-
-#menu li {
-    display: inline;
 }
 
 

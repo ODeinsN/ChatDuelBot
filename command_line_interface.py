@@ -7,6 +7,8 @@ import asyncio
 from sys import platform
 from StreamChat import StreamChat
 from CBDGUI.GUI.models import WebData
+from typing import Any
+import CBDGUI.GUI.utils.WebDataUpdater as wdu
 
 
 class CMDInterface:
@@ -43,18 +45,28 @@ class CMDInterface:
             except ValueError:
                 print("> This is not a number. Try Again")
 
-    def print_top_words(self, amount_top_words: int, amount_example_comments: int):
+    def print_top_words(self, amount_top_words: int, amount_example_comments: int, no_ouput: bool = False):
+        """
+        Prints top words and writes them into WebData.top_comments
+
+        i know its bad, deal with it
+        """
         top_words = self.CA.get_top_words(amount_top_words)
         if len(top_words) == 0:
-            print("> No comments submitted")
-            return
+            if not no_ouput:
+                print("> No comments submitted")
+                return
+        top_comments = []
         for word in top_words:
             data = self.CA.convert_counter_entry_to_dict(word, amount_example_comments)
             text = data['text'] if not self.CA.straw_poll_mode else data['pool_text']
-            print(f'"{text}": {data["amount"]}, {data["percentage"]}%')
+            if not no_ouput:
+                print(f'"{text}": {data["amount"]}, {data["percentage"]}%')
             for comment_text in data['comment_list']:
-                print(f'\t{comment_text}')
-            WebData.top_comments.append(data)
+                if not no_ouput:
+                    print(f'\t{comment_text}')
+            top_comments.append(data)
+        return top_comments
 
     def print_result(self, words: str):
         words = words.lower()
@@ -134,6 +146,11 @@ class CMDInterface:
 
             WebData.comment_counter_history.append(self.CA.comment_counter)
             WebData.comment_rate_history.append(comment_rate)
+            WebData.top_comments = self.print_top_words(5, 3, True)
+
+            wdu.write_data_into_file(comment_rate=WebData.comment_rate_history,
+                                     comment_counter=WebData.comment_counter_history,
+                                     top_words=WebData.top_comments)
 
             print(f'received {comment_rate} comments per second.\n')
 

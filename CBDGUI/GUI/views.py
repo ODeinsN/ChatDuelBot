@@ -13,6 +13,7 @@ from plotly.offline import plot
 import plotly.graph_objects as go
 import plotly.express as px
 from typing import Any
+from .utils import WebDataUpdater as wdu
 
 
 # class IndexView(generic.ListView):
@@ -63,7 +64,12 @@ from typing import Any
 
 def control(request):
     # time.sleep(1)
+    wdu.update_web_data()
+    print(f'{WebData.comment_rate_history=}')
+    print(f'{WebData.comment_counter_history=}')
+    print(f'{WebData.top_comments=}')
     template = 'plotly_dark'
+    graph_size = {'x': 750, 'y': 500}
     comment_rate_df = pandas.DataFrame(dict(
         comment_rate=WebData.comment_rate_history
     ))
@@ -74,20 +80,20 @@ def control(request):
         comment_rate_df,
         title=f"current: {WebData.comment_rate_history[-1]}",
         template=template,
-        height=500,
-        width=750
+        height=graph_size['y'],
+        width=graph_size['x']
     )
 
     comment_counter_fig = px.line(
         comment_counter_df,
         title=f"current: {WebData.comment_counter_history[-1]}",
         template=template,
-        height=500,
-        width=750
+        height=graph_size['y'],
+        width=graph_size['x']
     )
 
-    comment_rate_div = plot(comment_rate_fig, auto_open=False, output_type='div')
-    comment_counter_div = plot(comment_counter_fig, auto_open=False, output_type='div')
+    comment_rate_div = plot(comment_rate_fig, auto_open=False, output_type='div', include_plotlyjs=False, link_text="")
+    comment_counter_div = plot(comment_counter_fig, auto_open=False, output_type='div', include_plotlyjs=False, link_text="")
 
     top_words: list[dict[str, Any]] = WebData.top_comments
     context = \
@@ -95,8 +101,10 @@ def control(request):
             'range': [x for x in range(5)],
             'comment_rate_div': comment_rate_div,
             'comment_counter_div': comment_counter_div,
-            'top_words': top_words
+            'top_words': top_words,
+            'graph_size': graph_size
         }
+    print(f'{top_words=}')
     print(f'{WebData.comment_rate_history=}')
     print(f'{WebData.comment_rate_history=}')
 

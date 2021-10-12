@@ -11,3 +11,4 @@ plotly
 async_lru
 numpy
 pandas
+channels

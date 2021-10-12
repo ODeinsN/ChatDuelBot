@@ -20,6 +20,7 @@ class ChatAnalyser:
     _cd_start_time: datetime.datetime
     _command_prefix: str
     _banned_words: set[str]
+    _local_top_words: list[dict[str, Any]]
 
     def __init__(self):
         self._word_distribution_dict = {}
@@ -32,6 +33,9 @@ class ChatAnalyser:
         self._banned_words.update(txt_reader.get_word_set('files/bad_words_german.txt'))
 
     def is_word_banned(self, word: str) -> bool:
+        """
+        returns True if word is a banned word
+        """
         return word in self._banned_words
 
     def set_straw_poll_mode(self, mode: bool):
@@ -46,6 +50,9 @@ class ChatAnalyser:
         self._is_cd_running = False
 
     def get_top_words(self, n: int):
+        """
+        Calculates and returns top_words
+        """
         c = Counter(self._word_distribution_dict)
         most_common = c.most_common(n)
         return most_common
@@ -122,12 +129,6 @@ class ChatAnalyser:
             else:
                 self._word_distribution_dict.update({word: CommentContainer(chat_message)})
 
-    """
-    Dictionary entry types are:
-        'word': str
-        'percentage': float
-        'amount': int
-    """
     def get_results(self, words) -> dict[str, None]:
         result_dict: dict[str, None] = {}
         if self._comment_counter == 0:
