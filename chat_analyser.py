@@ -23,6 +23,8 @@ class ChatAnalyser:
     _command_prefix: str
     _banned_words: set[str]
     _local_top_words: list[dict[str, Any]]
+    _questions: list[str]
+    _current_question: str
 
     def __init__(self):
         self._word_distribution_dict = {}
@@ -33,6 +35,21 @@ class ChatAnalyser:
         self._command_prefix = '!'
         self._banned_words = set()
         self._banned_words.update(txt_reader.get_word_set('files/bad_words_german.txt'))
+        self._questions = []
+        self._current_question = ""
+
+    def load_question_txt(self):
+        with open('files/questions.txt', 'r') as file:
+            for line in file:
+                self._questions.append(line.replace('\n', ''))
+
+    @property
+    def questions(self):
+        return self._questions
+
+    @property
+    def current_question(self):
+        return self._current_question
 
     def is_word_banned(self, word: str) -> bool:
         """
@@ -50,6 +67,7 @@ class ChatAnalyser:
         self._word_distribution_dict.clear()
         self._comment_counter = 0
         self._is_cd_running = False
+        self._current_question = ''
 
     def get_top_words(self, n: int):
         """
@@ -109,7 +127,6 @@ class ChatAnalyser:
         self._cd_start_time = datetime.datetime.now()
         print(self._cd_start_time)
         while chat.is_alive() and self._is_cd_running:
-            # await word_list_UI.print_word_distribution()
             async for comment in chat.get().async_items():
                 if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
                     continue
@@ -219,3 +236,7 @@ class ChatAnalyser:
     @property
     def command_prefix(self):
         return self._command_prefix
+
+    @current_question.setter
+    def current_question(self, value):
+        self._current_question = value

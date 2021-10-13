@@ -17,6 +17,7 @@ class CMDInterface:
     def __init__(self):
         self.CA = chat_analyser.ChatAnalyser()
         self.streams: dict[str, StreamChat] = {}
+        self.CA.load_question_txt()
 
     def connect_to_chat(self, link: str, name: str, translate: bool = False):
         try:
@@ -114,11 +115,21 @@ class CMDInterface:
         WebData.comment_rate_history.clear()
         WebData.comment_counter_history.clear()
         WebData.top_comments.clear()
+        WebData.current_question = ''
 
         print(f'command prefix: {self.CA.command_prefix}')
         if len(self.streams) == 0:
             print("> No Livestreams found.")
             return
+
+        for i in range(len(self.CA.questions)):
+            print(f'{[i]}: {self.CA.questions[i]}')
+        question_id = -1
+        while 42:
+            question_id = self.get_int_input('> Select question: ')
+            if 0 <= question_id < len(self.CA.questions):
+                break
+            print('> IndexOutOfRange')
 
         straw_poll_mode: bool = bool(input("> is this a straw poll? [y/n]: ") in ("y", "yes", "j", "ja"))
 
@@ -130,6 +141,7 @@ class CMDInterface:
 
         self.CA.reset()
         self.CA._is_cd_running = True
+        self.CA.current_question = self.CA.questions[question_id]
 
         stream_reader_threads: list[threading.Thread] = []
         for key in self.streams:
@@ -160,10 +172,12 @@ class CMDInterface:
             WebData.comment_counter_history.append(self.CA.comment_counter)
             WebData.comment_rate_history.append(comment_rate)
             WebData.top_comments = self.print_top_words(5, 3, True)
+            WebData.current_question = self.CA.current_question
 
             wdu.write_data_into_file(comment_rate=WebData.comment_rate_history,
                                      comment_counter=WebData.comment_counter_history,
-                                     top_words=WebData.top_comments)
+                                     top_words=WebData.top_comments,
+                                     current_question=self.CA.current_question)
 
             print(f'received {comment_rate} comments per second.\n')
 
