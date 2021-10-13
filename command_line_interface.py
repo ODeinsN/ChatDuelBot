@@ -37,6 +37,17 @@ class CMDInterface:
         elif platform == "win32":
             os.system('cls')
 
+    def input_yes_or_no(self, text: str):
+        """
+        loops user input until correct answer
+        returns true if user typed 'y' or 'yes'
+        returns false if iser typed 'n' or 'no'
+        """
+        while 42:
+            input_str = input(text)
+            if input_str in {'y', 'yes', 'n', 'no'}:
+                return bool(input_str in {'y', 'yes'})
+
     @staticmethod
     def get_int_input(text: str = ""):
         while 42:
