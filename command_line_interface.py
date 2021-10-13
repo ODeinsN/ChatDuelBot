@@ -46,7 +46,7 @@ class CMDInterface:
             except ValueError:
                 print("> This is not a number. Try Again")
 
-    def print_top_words(self, amount_top_words: int, amount_example_comments: int, no_ouput: bool = False):
+    def print_top_words(self, amount_top_words: int, amount_example_comments: int, no_output: bool = False):
         """
         Prints top words and writes them into WebData.top_comments
 
@@ -54,17 +54,17 @@ class CMDInterface:
         """
         top_words = self.CA.get_top_words(amount_top_words)
         if len(top_words) == 0:
-            if not no_ouput:
+            if not no_output:
                 print("> No comments submitted")
                 return
         top_comments = []
         for word in top_words:
             data = self.CA.convert_counter_entry_to_dict(word, amount_example_comments)
             text = data['text'] if not self.CA.straw_poll_mode else data['pool_text']
-            if not no_ouput:
+            if not no_output:
                 print(f'"{text}": {data["amount"]}, {data["percentage"]}%')
             for comment_text in data['comment_list']:
-                if not no_ouput:
+                if not no_output:
                     print(f'\t{comment_text}')
             top_comments.append(data)
         return top_comments
@@ -109,7 +109,7 @@ class CMDInterface:
             print("> No Livestreams found.")
             return
 
-        straw_poll_mode: bool = bool(input("> Set specific answers [y/n]?: ") in ("y", "yes", "j", "ja"))
+        straw_poll_mode: bool = bool(input("> is this a straw poll? [y/n]: ") in ("y", "yes", "j", "ja"))
 
         if straw_poll_mode:
             self.init_straw_poll()

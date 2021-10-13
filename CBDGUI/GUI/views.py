@@ -59,9 +59,9 @@ from .utils import WebDataUpdater as wdu
 def control(request):
     # time.sleep(1)
     wdu.update_web_data()
-    print(f'{WebData.comment_rate_history=}')
-    print(f'{WebData.comment_counter_history=}')
-    print(f'{WebData.top_comments=}')
+    # print(f'{WebData.comment_rate_history=}')
+    # print(f'{WebData.comment_counter_history=}')
+    # print(f'{WebData.top_comments=}')
     template = 'plotly_dark'
     graph_size = {'x': 680, 'y': 430}
     comment_rate_df = pandas.DataFrame(dict(
@@ -106,3 +106,13 @@ def control(request):
 
     # return HttpResponseRedirect(reverse('GUI:control'))
     return render(request, 'GUI/control.html', context)
+
+
+def display(request):
+    wdu.update_web_data()
+    context = \
+        {'range': [x for x in range(3)],
+         'top_words': WebData.top_comments,
+         'current_question': WebData.current_question
+         }
+    return render(request, 'GUI/display.html', context)

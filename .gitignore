@@ -1,2 +1,3 @@
 /txt_editor.py
 *.data
+*.pyc
