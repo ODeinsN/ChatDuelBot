@@ -63,7 +63,7 @@ def control(request):
     print(f'{WebData.comment_counter_history=}')
     print(f'{WebData.top_comments=}')
     template = 'plotly_dark'
-    graph_size = {'x': 750, 'y': 500}
+    graph_size = {'x': 680, 'y': 430}
     comment_rate_df = pandas.DataFrame(dict(
         comment_rate=WebData.comment_rate_history
     ))
@@ -86,7 +86,8 @@ def control(request):
         width=graph_size['x']
     )
 
-    comment_rate_div = plot(comment_rate_fig, auto_open=False, output_type='div', include_plotlyjs=False, link_text="")
+    comment_rate_div = plot(comment_rate_fig, auto_open=False,
+                            output_type='div', include_plotlyjs=False, link_text="")
     comment_counter_div = plot(comment_counter_fig, auto_open=False, output_type='div', include_plotlyjs=False,
                                link_text="")
 

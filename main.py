@@ -19,9 +19,9 @@ def create_test_date():
 
 
 def main():
-    # create_test_date()
-    cmd = CMDInterface()
-    asyncio.run(cmd.run())
+    create_test_date()
+    #cmd = CMDInterface()
+    #asyncio.run(cmd.run())
 
 
 if __name__ == "__main__":

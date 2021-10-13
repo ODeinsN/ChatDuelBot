@@ -1,5 +1,5 @@
 body {
-    background-color: black;
+    background-color:black;
     font-family: 'Courier New', Courier, monospace;
     color: white;
     padding: 0;
@@ -13,18 +13,26 @@ li {
 .graph-container {
     display: flex;
     flex-wrap: wrap;
-    width: 100%;
+    width: 50%;
 }
 
 .graph {
     width: 50%;
     overflow: auto;
+    margin-right: 10px;
 }
 
 .graph img {
     width: 100%;
     overflow: auto;
 }
+
+.words-container {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+}
+
 
 
 

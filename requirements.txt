@@ -6,7 +6,7 @@ asynctest
 async-cache
 google-cloud-translate==2.0.1
 django
-django-extensions Werkzeug
+django-extensions
 plotly
 async_lru
 numpy

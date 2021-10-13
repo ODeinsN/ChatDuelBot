@@ -1,10 +1,16 @@
 <style>
-        .indent-1 {float: left; align: center;}
-        .indent-1 section {width: 50%; float: left;}line;}
+    .indent-1 {
+        float: left;
+        align: center;
+    }
 
+    .indent-1 section {
+        width: 50%;
+        float: left;
+    }
 
-
-
+    line;
+    }
 </style>
 
 <head>
@@ -14,49 +20,53 @@
 </head>
 
 <body>
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'GUI/style.css' %}">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'GUI/style.css' %}">
 
-{% block content%}
-<section class="indent-1">
-    <h1>Chat Duel Results</h1>
-    <div id="graphs">
-        <section>
-            <h3>comment rate per second</h3>
-            <div class="graph left"
-                 style="display: block; text-align: center; width: {{graph_size.x}}px; height: {{graph_size.y}}px">
-                {{ comment_rate_div|safe }}
-            </div>
-        </section>
-        <section>
-            <h3>comment counter history</h3>
-            <div class="graph right"
-                 style="display: block; text-align: center; width: {{graph_size.x}}px; height: {{graph_size.y}}px">
-                {{ comment_counter_div|safe }}
-            </div>
-        </section>
-    </div>
-    <div id="comment_box">
-        <section>
-            <h3>Top Words</h3>
-            <ol>
-                {% if top_words %}
-                {% for word in top_words %}
-                <li>{{word.text}}: {{word.amount}} = {{word.percentage}}%</li>
-                <ul>
-                    {% for comment in word.comment_list %}
-                    <li>{{comment}}</li>
-                    {% endfor %}
-                </ul>
-                {% endfor %}
-                {% else %}
-                <l>no comments available</l>
-                {% endif %}
-            </ol>
-        </section>
-    </div>
-</section>
-{% endblock content%}
+    {% block content%}
+    <section class="indent-1">
+        <h1>Chat Duel Results</h1>
+        <div id="graphs">
+            <section>
+                <h3>Comment rate per second</h3>
+                <div class="graph left"
+                    style="display: block; text-align: center; width: {{graph_size.x}}px; height: {{graph_size.y}}px">
+                    {{ comment_rate_div|safe }}
+                </div>
+            </section>
+            <section>
+                <h3>Comment counter history</h3>
+                <div class="graph right"
+                    style="display: block; text-align: center; width: {{graph_size.x}}px; height: {{graph_size.y}}px">
+                    {{ comment_counter_div|safe }}
+                </div>
+            </section>
+        </div>
+        <div id="comment_box">
+            <section>
+                <h3>Top words</h3>
+                <ol>
+                    <div class="words-container">
+
+                        {% if top_words %}
+                        {% for word in top_words %}
+                        <div class="item">
+                            <li>{{word.text}}: {{word.amount}} = {{word.percentage}}%</li>
+                            <ul>
+                                {% for comment in word.comment_list %}
+                                <li>{{comment}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <l>no comments available</l>
+                        {% endif %}
+                    </div>
+
+                </ol>
+            </section>
+        </div>
+    </section>
+    {% endblock content%}
 </body>
-
-
