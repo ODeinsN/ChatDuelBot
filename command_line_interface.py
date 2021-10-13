@@ -162,7 +162,8 @@ class CMDInterface:
         while time.time() < start_time + duration:
             try:
                 time.sleep(wait_time)
-                print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
+                print(
+                    f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
                 comment_counter_delta = self.CA.comment_counter - temp
                 temp = self.CA.comment_counter
                 comment_rate = round(comment_counter_delta / wait_time, 2)

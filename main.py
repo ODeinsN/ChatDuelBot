@@ -6,7 +6,7 @@ from command_line_interface import CMDInterface
 
 def create_test_date():
     comment_rate = [0, 7, 2, 3, 1, 19, 4]
-    comment_counter = [0,]
+    comment_counter = [0, ]
     for x in comment_rate:
         comment_counter.append(comment_counter[-1] + x)
     top_words = [

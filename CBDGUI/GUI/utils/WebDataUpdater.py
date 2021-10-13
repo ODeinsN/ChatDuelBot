@@ -1,12 +1,13 @@
-from ..models import WebData
-from threading import Lock
-from typing import Any
-from array import array
 import pickle
 from pathlib import Path
+from threading import Lock
+from typing import Any
+
+from ..models import WebData
 
 
-def write_data_into_file(comment_rate: list[float], comment_counter: list[int], top_words: list[dict[str, Any]], current_question: str):
+def write_data_into_file(comment_rate: list[float], comment_counter: list[int], top_words: list[dict[str, Any]],
+                         current_question: str):
     lock = Lock()
     with lock:
         src_dir_path = 'CBDGUI/GUI/utils/src'
