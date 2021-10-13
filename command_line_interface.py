@@ -45,7 +45,7 @@ class CMDInterface:
         returns false if iser typed 'n' or 'no'
         """
         while 42:
-            input_str = input(text)
+            input_str = input(text).lower()
             if input_str in {'y', 'yes', 'n', 'no'}:
                 return bool(input_str in {'y', 'yes'})
 
@@ -131,7 +131,7 @@ class CMDInterface:
                 break
             print('> IndexOutOfRange')
 
-        straw_poll_mode: bool = bool(input("> is this a straw poll? [y/n]: ") in ("y", "yes", "j", "ja"))
+        straw_poll_mode: bool = self.input_yes_or_no("> is this a straw poll? [y/n]: ")
 
         if straw_poll_mode:
             self.init_straw_poll()
@@ -148,8 +148,6 @@ class CMDInterface:
             stream = self.streams[key]
             stream_reader_threads.append(self.analyse_chat(stream.stream, stream.translation_on))
 
-        # print("> reading chat. Waiting for end of timer. Press [CTRL] + [SHIFT] + x to stop earlier.")
-
         temp = self.CA.comment_counter
         wait_time = 1  # seconds
 
@@ -162,24 +160,28 @@ class CMDInterface:
 
     def print_comment_receive_stats(self, duration, start_time, temp, wait_time):
         while time.time() < start_time + duration:
-            time.sleep(wait_time)
-            print(
-                f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
-            comment_counter_delta = self.CA.comment_counter - temp
-            temp = self.CA.comment_counter
-            comment_rate = round(comment_counter_delta / wait_time, 2)
+            try:
+                time.sleep(wait_time)
+                print(f"{self.CA.comment_counter} comments received. {round(start_time + duration - time.time())} seconds left.")
+                comment_counter_delta = self.CA.comment_counter - temp
+                temp = self.CA.comment_counter
+                comment_rate = round(comment_counter_delta / wait_time, 2)
 
-            WebData.comment_counter_history.append(self.CA.comment_counter)
-            WebData.comment_rate_history.append(comment_rate)
-            WebData.top_comments = self.print_top_words(5, 3, True)
-            WebData.current_question = self.CA.current_question
+                WebData.comment_counter_history.append(self.CA.comment_counter)
+                WebData.comment_rate_history.append(comment_rate)
+                WebData.top_comments = self.print_top_words(5, 3, True)
+                WebData.current_question = self.CA.current_question
 
-            wdu.write_data_into_file(comment_rate=WebData.comment_rate_history,
-                                     comment_counter=WebData.comment_counter_history,
-                                     top_words=WebData.top_comments,
-                                     current_question=self.CA.current_question)
+                wdu.write_data_into_file(comment_rate=WebData.comment_rate_history,
+                                         comment_counter=WebData.comment_counter_history,
+                                         top_words=WebData.top_comments,
+                                         current_question=self.CA.current_question)
 
-            print(f'received {comment_rate} comments per second.\n')
+                print(f'received {comment_rate} comments per second.\n')
+
+            except KeyboardInterrupt:
+                print('KeyboardInterrupt')
+                break
 
     async def execute(self, command: int):
         # clear()
@@ -189,7 +191,7 @@ class CMDInterface:
         elif command == 1:
             link = input("> Pls enter chat link or ID [youtube.com/video/<ID>]: ")
             name = input("> Pls enter a name: ")
-            translate: bool = input("> Translate answers?[y/n]: ").lower() in ['y', 'yes']
+            translate: bool = self.input_yes_or_no("> Translate answers?[y/n]: ")
             self.connect_to_chat(link, name, translate)
 
         elif command == 2:
