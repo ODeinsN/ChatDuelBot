@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Question Display Window</title>
 </head>
+
 <body>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'GUI/display_style.css' %}">
-    <h1>{{ current_question }}</h1>
-    <ol>
-        {% for word in top_words %}
-        <li>{{ word.text}} = {{word.percentage}}%</li>
-        {% endfor %}
-    </ol>
-<button type="button" onclick="window.location.reload();">update</button>
-<button type="button">hide all</button>
+    <div id="bg" style="background-image: url('{% static 'GUI/assets/LED.png'%}')" ;>
+        <link rel="stylesheet" type="text/css" href="{% static 'GUI/display_style.css' %}">
+        <h1>{{ current_question }}</h1>
+        <ol>
+            {% for word in top_words %}
+            <li>{{ word.text}} = {{word.percentage}}%</li>
+            {% endfor %}
+        </ol>
+        <button type="button" onclick="window.location.reload();">update</button>
+        <button type="button">hide all</button>
+    </div>
+
 </body>
+
 </html>
