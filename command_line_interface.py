@@ -73,6 +73,7 @@ class CMDInterface:
         for word in top_words:
             data = self.CA.convert_counter_entry_to_dict(word, amount_example_comments)
             text = data['text'] if not self.CA.straw_poll_mode else data['pool_text']
+            data['text'] = text
             if not no_output:
                 print(f'"{text}": {data["amount"]}, {data["percentage"]}%')
             for comment_text in data['comment_list']:
