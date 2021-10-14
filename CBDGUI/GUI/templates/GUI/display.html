@@ -7,38 +7,52 @@
 
     <script>
         function hideAll() {
-            let x = document.getElementsByClassName("answers");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
+            let x = document.getElementById("answerOne");
+            if (x.style.display === "block") {
                 x.style.display = "none";
+            } else {
+                x.style.display = "block";
+            }
+
+            let y = document.getElementById("answerTwo");
+            if (y.style.display === "block") {
+                y.style.display = "none";
+            } else {
+                y.style.display = "block";
+            }
+
+            let i = document.getElementById("answerThree");
+            if (i.style.display === "block") {
+                i.style.display = "none";
+            } else {
+                i.style.display = "block";
             }
         }
 
         function hideOne() {
             let x = document.getElementById("answerOne");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
+            if (x.style.display === "block") {
                 x.style.display = "none";
+            } else {
+                x.style.display = "block";
             }
         }
 
         function hideTwo() {
             let x = document.getElementById("answerTwo");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
+            if (x.style.display === "block") {
                 x.style.display = "none";
+            } else {
+                x.style.display = "block";
             }
         }
 
         function hideThree() {
             let x = document.getElementById("answerThree");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
+            if (x.style.display === "block") {
                 x.style.display = "none";
+            } else {
+                x.style.display = "block";
             }
         }
     </script>
@@ -53,7 +67,7 @@
             <button type="button" class="percentage" onclick="hideOne()">
                 <li>{{top_words.0.percentage}}%</li>
             </button>
-            <div id="answerOne" class="text answers">
+            <div id="answerOne" class="text">
                 <li>{{ top_words.0.text}}</li>
             </div>
             <button type="button" class="percentage1" onclick="hideTwo()">

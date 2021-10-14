@@ -58,6 +58,7 @@ ol {
     text-align: left;
     margin-left: 14em;
     margin-top: -1.3em;
+    display: none;
 }
 
 .percentage1 {
@@ -72,6 +73,8 @@ ol {
     text-align: left;
     margin-left: 14em;
     margin-top: -1.3em;
+    display: none;
+
 }
 
 .buttons-both {
