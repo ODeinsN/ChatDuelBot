@@ -25,6 +25,8 @@ class ChatAnalyser:
     _local_top_words: list[dict[str, Any]]
     _questions: list[str]
     _current_question: str
+    _user_set: set[str]
+    _single_submission_mode: bool
 
     def __init__(self):
         self._word_distribution_dict = {}
@@ -37,6 +39,8 @@ class ChatAnalyser:
         self._banned_words.update(txt_reader.get_word_set('files/bad_words_german.txt'))
         self._questions = []
         self._current_question = ""
+        self._user_set = set()
+        self._single_submission_mode = False
 
     def load_question_txt(self):
         with open('files/questions.txt', 'r') as file:
@@ -68,6 +72,7 @@ class ChatAnalyser:
         self._comment_counter = 0
         self._is_cd_running = False
         self._current_question = ''
+        self.user_set.clear()
 
     def get_top_words(self, n: int):
         """
@@ -86,6 +91,9 @@ class ChatAnalyser:
     async def add_comment(self, chat_message, translate: bool = False):
         message: str = chat_message.message.lower()
         translator = Translator()
+        if self.single_submission_mode:
+            if chat_message.author.name in self.user_set:
+                return
         if not message.startswith(self._command_prefix) or message == self._command_prefix or len(message) > 64:
             return
         message = message.removeprefix(self._command_prefix)
@@ -116,7 +124,22 @@ class ChatAnalyser:
         for word in words:
             self.add_comment_to_wordlist(chat_message, word)
 
+        if self.single_submission_mode:
+            self.user_set.add(chat_message.author.name)
+
         self._comment_counter += 1
+
+    @property
+    def user_set(self):
+        lock = threading.Lock()
+        with lock:
+            return self._user_set
+
+    @property
+    def single_submission_mode(self):
+        lock = threading.Lock()
+        with lock:
+            return self._single_submission_mode
 
     # adding plus 15 seconds to compensate time differences between local and youtube time
     def is_message_out_of_time(self, message_time: str, start_time: datetime.datetime) -> bool:
@@ -240,3 +263,7 @@ class ChatAnalyser:
     @current_question.setter
     def current_question(self, value):
         self._current_question = value
+
+    @single_submission_mode.setter
+    def single_submission_mode(self, value):
+        self._single_submission_mode = value
