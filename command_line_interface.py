@@ -131,6 +131,8 @@ class CMDInterface:
                 break
             print('> IndexOutOfRange')
 
+        self.CA.single_submission_mode = not self.input_yes_or_no('> Allow multiple submissions from one user?[y/n]: ')
+
         straw_poll_mode: bool = self.input_yes_or_no("> is this a straw poll? [y/n]: ")
 
         if straw_poll_mode:
