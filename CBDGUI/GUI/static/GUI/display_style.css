@@ -30,10 +30,27 @@ ol {
 }
 
 .percentage {
+    font-family: 'HDADin', 'Helvetica', 'Arial', sans-serif;
     font-size: 2em;
-    text-align: center;
-    margin-right: 21em;
-    margin-top: 5.3em;
+    color: white;
+    background: none;
+    border: none;
+    text-decoration: none;
+    margin-left: 10em;
+    margin-top: 4.7em;
+    
+}
+
+.percentage1 {
+    font-family: 'HDADin', 'Helvetica', 'Arial', sans-serif;
+    font-size: 2em;
+    color: white;
+    background: none;
+    border: none;
+    text-decoration: none;
+    margin-left: 9.8em;
+    margin-top: 4.7em;
+    
 }
 
 .text {
@@ -57,8 +74,28 @@ ol {
     margin-top: -1.3em;
 }
 
-
+.buttons-both {
+    position: absolute;
+    bottom: 0;
+}
 
 .buttons {
+    font-family: 'HDADin', 'Helvetica', 'Arial', sans-serif;
+    background-color: #aba7c6;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px 10px;
+    transition-duration: 0.4s;
+}
 
+.buttons:hover {
+    background-color: #575656;
+}
+
+.buttons:active {
+    background-color: black;
 }

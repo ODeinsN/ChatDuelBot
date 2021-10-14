@@ -4,6 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Question Display Window</title>
+
+    <script>
+        function hideAll() {
+            let x = document.getElementsByClassName("answers");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+
+        function hideOne() {
+            let x = document.getElementById("answerOne");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+
+        function hideTwo() {
+            let x = document.getElementById("answerTwo");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+
+        function hideThree() {
+            let x = document.getElementById("answerThree");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -12,28 +50,30 @@
         <link rel="stylesheet" type="text/css" href="{% static 'GUI/display_style.css' %}">
         <h1>{{ current_question }}</h1>
         <ol>
-            <div class="percentage">
+            <button type="button" class="percentage" onclick="hideOne()">
                 <li>{{top_words.0.percentage}}%</li>
-            </div>
-            <div class="text">
+            </button>
+            <div id="answerOne" class="text answers">
                 <li>{{ top_words.0.text}}</li>
             </div>
-            <div class="percentage1">
+            <button type="button" class="percentage1" onclick="hideTwo()">
                 <li>{{top_words.1.percentage}}%</li>
-            </div>
-            <div class="text">
+            </button>
+            <div id="answerTwo" class="text1 answers">
                 <li>{{ top_words.1.text}}</li>
             </div>
-            <div class="percentage1">
+            <button type="button" class="percentage1" onclick="hideThree()">
                 <li>{{top_words.2.percentage}}%</li>
-            </div>
-            <div class="text">
+            </button>
+            <div id="answerThree" class="text1 answers">
                 <li>{{ top_words.2.text}}</li>
             </div>
 
         </ol>
-        <button class="buttons update" type="button" onclick="window.location.reload();">update</button>
-        <button class="buttons hide" type="button">hide all</button>
+        <div class="buttons-both">
+            <button class="buttons update" type="button" onclick="window.location.reload();">update</button>
+            <button class="buttons hide" type="button" onclick="hideAll()">hide all</button>
+        </div>
     </div>
 
 </body>
