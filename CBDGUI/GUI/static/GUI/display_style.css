@@ -19,4 +19,27 @@ h1 {
     padding-top: 2.7em;
 }
 
+ol {
+    list-style: none;
+}
 
+.percentage {
+    font-size: 2em;
+    text-align: center;
+    margin-right: 21em;
+    margin-top: 5.8em;
+}
+
+.text {
+    font-size: 2em;
+    text-align: left;
+    margin-left: 14em;
+    margin-top: -1em;
+}
+
+.percentage1 {
+    font-size: 2em;
+    text-align: center;
+    margin-right: 21em;
+    margin-top: 3.4em;
+}

@@ -12,12 +12,28 @@
         <link rel="stylesheet" type="text/css" href="{% static 'GUI/display_style.css' %}">
         <h1>{{ current_question }}</h1>
         <ol>
-            {% for word in top_words %}
-            <li>{{ word.text}} = {{word.percentage}}%</li>
-            {% endfor %}
+            <div class="percentage">
+                <li>{{top_words.0.percentage}}%</li>
+            </div>
+            <div class="text">
+                <li>{{ top_words.0.text}}</li>
+            </div>
+            <div class="percentage1">
+                <li>{{top_words.1.percentage}}%</li>
+            </div>
+            <div class="text">
+                <li>{{ top_words.1.text}}</li>
+            </div>
+            <div class="percentage1">
+                <li>{{top_words.2.percentage}}%</li>
+            </div>
+            <div class="text">
+                <li>{{ top_words.2.text}}</li>
+            </div>
+
         </ol>
-        <button type="button" onclick="window.location.reload();">update</button>
-        <button type="button">hide all</button>
+        <button class="buttons update" type="button" onclick="window.location.reload();">update</button>
+        <button class="buttons hide" type="button">hide all</button>
     </div>
 
 </body>
