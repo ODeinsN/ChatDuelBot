@@ -65,19 +65,20 @@
         <h1>{{ current_question }}</h1>
         <ol>
             <button type="button" class="percentage" onclick="hideOne()">
-                <li>1.</li>
+                <li>Top 1</li>
             </button>
             <div id="answerOne" class="text">
                 <li>{{ top_words.0.text}} ({{top_words.0.percentage}}%)</li>
             </div>
+            <br>
             <button type="button" class="percentage1" onclick="hideTwo()">
-                <li>2.</li>
+                <li>Top 2</li>
             </button>
             <div id="answerTwo" class="text1 answers">
                 <li>{{ top_words.1.text}} ({{top_words.1.percentage}}%)</li>
             </div>
             <button type="button" class="percentage1" onclick="hideThree()">
-                <li>3.</li>
+                <li>Top 3</li>
             </button>
             <div id="answerThree" class="text1 answers">
                 <li>{{ top_words.2.text}} ({{top_words.2.percentage}}%)</li>
