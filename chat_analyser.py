@@ -110,8 +110,8 @@ class ChatAnalyser:
             if len(words) > 1:
                 return
             found: bool = False
-            for key in self._straw_poll_options.keys():
-                if str(key) in words:
+            for key, value in self._straw_poll_options.items():
+                if str(key) in words or value in words:
                     found = True
                     break
             if not found:
@@ -122,7 +122,15 @@ class ChatAnalyser:
                 words[i] = await self.translate_text(words[i], dest='de', src='en')
 
         for word in words:
-            self.add_comment_to_wordlist(chat_message, word)
+            word_as_key: int = -1
+            try:
+                word_as_key = int(word)
+            except ValueError:
+                pass
+            if word_as_key in self.straw_poll_options.keys():
+                self.add_comment_to_wordlist(chat_message, self.straw_poll_options[word_as_key])
+            else:
+                self.add_comment_to_wordlist(chat_message, word)
 
         if self.single_submission_mode:
             self.user_set.add(chat_message.author.name)
@@ -240,7 +248,20 @@ class ChatAnalyser:
         comment_list: list[str] = []
         amount: int = entry[1].get_comment_counter()
         percentage = round(amount * 100 / self.comment_counter, 2)
-        pool_text = self.straw_poll_options[int(text)] if self.straw_poll_mode else text
+        text_as_int: int = 0
+        is_int: bool = False
+        try:
+            text_as_int: int = int(text)
+            is_int = True
+        except ValueError:
+            pass
+        pool_text = ''
+        if self.straw_poll_mode:
+            if is_int:
+                pool_text = self.straw_poll_options[text_as_int]
+            else:
+                pool_text = text
+                
         if amount >= amount_example_comments:
             for _ in range(amount_example_comments):
                 comment_list.append(self._word_distribution_dict[text].get_random_comment())

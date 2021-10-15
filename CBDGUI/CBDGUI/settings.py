@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-y7q=joc^3*bo4ht7uj6(r+9et#gm%s*bd*6xa$yzj+i7og_pm6
 # TODO: find out why .css files only load in debug mode
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '10.104.114.208', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '10.101.114.208', '127.0.0.1']
 
 # Application definition
 
