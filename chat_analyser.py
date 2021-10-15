@@ -149,14 +149,14 @@ class ChatAnalyser:
     async def read_chat(self, chat, translate: bool = False):
         self._cd_start_time = datetime.datetime.now()
         print(self._cd_start_time)
-        while chat.is_alive() and self._is_cd_running:
-            async for comment in chat.get().async_items():
-                if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
-                    continue
-                t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
-                t.start()
-                t.join()
         try:
+            while chat.is_alive() and self._is_cd_running:
+                async for comment in chat.get().async_items():
+                    if self.is_message_out_of_time(comment.datetime, start_time=self._cd_start_time):
+                        continue
+                    t = Thread(target=asyncio.run, args=(self.add_comment(comment, translate),))
+                    t.start()
+                    t.join()
             chat.raise_for_status()
         except pytchat.ChatDataFinished:
             print("> Chat data finished.")
