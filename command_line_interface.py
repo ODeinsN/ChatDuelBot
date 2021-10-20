@@ -24,7 +24,6 @@ class CMDInterface:
             self.streams.update({name: StreamChat(link, name, translate)})
             if self.streams[name].stream.is_alive():
                 print(f"> Connected to {name} Stream")
-                print(self.streams)
         except pytchat.ChatDataFinished:
             print("> Chat data finished")
         except Exception as e:
@@ -188,12 +187,12 @@ class CMDInterface:
                 break
 
     async def execute(self, command: int):
-        # clear()
+        self.clear()
         if command == 0:
             exit()
 
         elif command == 1:
-            link = input("> Pls enter chat link or ID [youtube.com/video/<ID>]: ")
+            link = input("> Pls enter chat link or ID [youtube.com/video/watch?v=<ID>]: ")
             name = input("> Pls enter a name: ")
             translate: bool = self.input_yes_or_no("> Translate answers?[y/n]: ")
             self.connect_to_chat(link, name, translate)

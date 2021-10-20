@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import pytchat
 
 
-@dataclass
+@dataclass(repr=False)
 class StreamChat:
     _stream: None
     _name: str
@@ -25,6 +25,7 @@ class StreamChat:
         # connection_thread.start()
 
     def __repr__(self):
+        print('__repr__ used')
         return f'Name: {self._name}\n' \
                f'Translation: {"ON" if self.translation_on else "OFF"}\n' \
                f'Status: {"CONNECTED" if self.is_connected() else "DISCONNECTED"}'
