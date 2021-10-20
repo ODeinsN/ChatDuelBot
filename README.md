@@ -46,9 +46,10 @@ else you will see an error message like this:
 <class 'pytchat.exceptions.InvalidVideoIdException'> Invalid video id: d
 ```
 ---
-#### <l>WARNING
+#### WARNING
 The connection will be cut after 10-15 minutes if the Bot hasn't been used. This is an issue from the used library Pytchat and WILL break the the usabilty of the tool.
 In this case restart it or just add the livestream again. You will not be notified if the Connection has been cut.
+Currently only reading from oen Livestream at a time is stable.
 ---
 
 ### Starting the Bot
