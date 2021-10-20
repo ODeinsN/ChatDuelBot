@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-y7q=joc^3*bo4ht7uj6(r+9et#gm%s*bd*6xa$yzj+i7og_pm6
 # DON'T TURN DEBUG OFF. THIS WILL DESTROY THE WEBSITE
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.3.10']
 
 # Application definition
 
