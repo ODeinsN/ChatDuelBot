@@ -96,8 +96,8 @@ After Pressing enter the bot will start.
 ---
 #### IMPORTANT: 
 The Bot will only read messages that have been written after the Bot started and will ignore everything after the timer ended.
-If the delay between realtime and LIVE is like 40 seconds: your viewes will see the question in 40 seconds.
-You should start the bot if the user can see the message. Not if you show them the message. Else not all Comments might be analysed.
+If the delay between realtime and LIVE is like 40 second,: your viewers will see the question in 40 seconds.
+You should start the bot if the user can see the message. Not when you show them the message, else not all Comments might be analysed.
 ---
 
 ### Displaying results
@@ -107,12 +107,12 @@ First you have to specify the amount of top words which should be displayed
 ```
 > Pls enter amount of top words: 3
 ```
-Then you give specify how many example comments should be displayd: 
+Then you give specify how many example comments should be displayed: 
 ```
 > Pls enter amount of example comments: 3
 ```
-You will see the word itself, the amount of votes and the percentage relative to the amound of comments, and example comments below.
-If the number you entered is bigger thatn the amount of comments, all comments will be printed.
+You will see the word itself, the amount of votes and the percentage relative to the amount of comments, and example comments below.
+If the number you entered is bigger then the amount of comments, all comments will be printed.
 If it is smaller random comments will be printed.
 ```
 "e": 2, 100.0%
@@ -128,26 +128,26 @@ By typing "4" in the main menu you can print the results for a single word by en
 
 ## How to use the webserver 
 ### Monitoring
-You can display the results on a website on a local website by running the `3_WIN_run_server_localy.bat` file.
+You can display the results on a website, using a local webserber by running the `3_WIN_run_server_localy.bat` file.
 It will be available at [http://127.0.0.1:8000/GUI](http://127.0.0.1:8000/GUI) only on your Computer.
 
-If you want to make the Website visivle on your local network:
+If you want to make the Website visible on your local network:
 * open "CDBGUI/CBDGUI/settings.py" in a text editor 
 * add your IP adress to to ```ALLOWED_HOSTS = ['localhost', '127.0.0.1', '<your IP>']```
-Then start `3_1_WIN_run_server_in_network.bat`. The website will be rachable from other Devices over "<your ip>:8000/GUI"
+Then start `3_1_WIN_run_server_in_network.bat`. The website will be reachable from other Devices over "<your ip>:8000/GUI"
 
 ### "Nice" result screen
 There is also another results site which you can visit at 127.0.0.1:8000/GUI/display but it is not not ready to use. 
 
 Just ignore it or fix it.
-You can show/hide all results by pressing the "hide all". The site won't update automaticly so you have to press on "update" or press F5. There is now difference.
+You can show/hide all results by pressing the "hide all". The site won't update automatically so you have to press on "update" or press F5. There is no difference.
 You can hide and reveal specific results by pressing on the "Top x" label.
 
 
 ## How The comments get analysed
 1. If the comment starts not with the prefix "!" it will be ignored.
 2. Every word of the comment will be put into a hashset to eliminate repetitions.
-3. The word will be saved in an Dictionary.
+3. The word will be saved in an Dictionary (HashMap).
 	* The word is the key
 	* The comment is the value
 4. The top words will be calculated by the percentage in relation to the amount of comments they are part of.
