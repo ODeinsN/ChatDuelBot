@@ -47,14 +47,14 @@ else you will see an error message like this:
 ```
 ---
 #### WARNING
-The connection will be cut after 10-15 minutes if the Bot hasn't been used. This is an issue from the used library Pytchat and WILL break the the usabilty of the tool.
+The connection will be cut after 10-15 minutes if the Bot hasn't been used. This is an issue from the used library Pytchat and WILL break the usabilty of the tool.
 In this case restart it or just add the livestream again. You will not be notified if the Connection has been cut.
-Currently only reading from oen Livestream at a time is stable.
+Currently only reading from one Livestream at a time is stable.
 ---
 
 ### Starting the Bot
 
-After you succesfully added yout Livestream you can start the bot by pressing 2. 
+After you succesfully added your Livestream, you can start the bot by pressing 2. 
 First it will show you the command prefix and then it will load the questions from file/questions.txt.
 ```
 command prefix: !
